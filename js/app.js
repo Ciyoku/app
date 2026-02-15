@@ -112,7 +112,7 @@ function loadBook(id) {
             bookTitleDisplay.textContent = info?.title || 'ÙƒØªØ§Ø¨ ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ';
             document.title = info?.title ? `${info.title} | Ø§Ù„Ù‚Ø§Ø±Ø¦` : 'Ø§Ù„Ù‚Ø§Ø±Ø¦';
 
-            return fetchBookParts(id);
+            return fetchBookParts(id, currentBookPartCount);
         })
         .then(parts => {
             if (!parts || parts.length === 0) {
@@ -218,53 +218,24 @@ function fetchTextIfOk(url) {
     return fetch(url).then(response => (response.ok ? response.text() : null));
 }
 
-function fetchIndexedParts(id) {
-    const fetchPart = (index) => fetch(`books/${id}/${index}.txt`);
-    return fetchPart(1).then(firstResp => {
-        if (!firstResp.ok) return null;
-        return firstResp.text().then(firstText => {
-            const parts = [firstText];
-            const loadNext = (index) => fetchPart(index).then(resp => {
-                if (!resp.ok) return parts;
-                return resp.text().then(text => {
-                    parts.push(text);
-                    return loadNext(index + 1);
-                });
-            });
-            return loadNext(2);
-        });
-    });
+function getBookPartFileName(partIndex) {
+    return partIndex === 0 ? 'book.txt' : `book${partIndex + 1}.txt`;
 }
 
-function fetchNamedParts(id) {
-    return fetchTextIfOk(`books/${id}/book.txt`).then(firstText => {
-        if (firstText === null) return null;
-        const parts = [firstText];
-        const loadNext = (index) => fetchTextIfOk(`books/${id}/book${index}.txt`).then(text => {
-            if (text === null) return parts;
-            parts.push(text);
-            return loadNext(index + 1);
-        });
-        return loadNext(2);
-    });
-}
+function fetchBookParts(id, expectedPartCount = 1) {
+    const totalParts = Number.isInteger(expectedPartCount) && expectedPartCount > 1
+        ? expectedPartCount
+        : 1;
 
-function fetchBookParts(id) {
-    return fetchIndexedParts(id).then(indexedParts => {
-        if (indexedParts && indexedParts.length > 0) {
-            return indexedParts;
+    const partRequests = Array.from({ length: totalParts }, (_, index) => (
+        fetchTextIfOk(`books/${id}/${getBookPartFileName(index)}`)
+    ));
+
+    return Promise.all(partRequests).then((parts) => {
+        if (parts.some((part) => part === null)) {
+            throw new Error("Could not load book content");
         }
-
-        return fetchNamedParts(id).then(namedParts => {
-            if (namedParts && namedParts.length > 0) {
-                return namedParts;
-            }
-
-            return fetchTextIfOk(`books/${id}/book${id}.txt`).then(text => {
-                if (text !== null) return [text];
-                throw new Error("Could not load book content");
-            });
-        });
+        return parts;
     });
 }
 
@@ -330,7 +301,7 @@ function renderSidebar(chapters) {
     list.innerHTML = '';
 
     if (chapters.length === 0) {
-        list.innerHTML = '<li class="chapter-empty">Ø³ØªØªÙ… Ø¥Ø¶Ø§ÙØ© Ø§Ù„ÙØµÙˆÙ„ Ù„Ø§Ø­Ù‚Ù‹Ø§.</li>';
+        list.innerHTML = '<li class="chapter-empty">\u0633\u062a\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0641\u0635\u0648\u0644 \u0644\u0627\u062d\u0642\u064b\u0627.</li>';
         currentChapters = [];
         return;
     }
@@ -483,12 +454,6 @@ function setupUI() {
         if (compactMode) {
             sidebar.classList.add('hidden');
             content.classList.add('full-width');
-            return;
-        }
-
-        if (!searchOverlay.classList.contains('active')) {
-            sidebar.classList.remove('hidden');
-            content.classList.remove('full-width');
         }
     };
 
