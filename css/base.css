@@ -259,7 +259,7 @@ a {
     align-items: center;
     overflow-x: auto;
     min-width: 0;
-    gap: 0.95rem;
+    gap: 0.82rem;
     scrollbar-width: thin;
     scrollbar-color: #4a4a4a transparent;
     padding-bottom: 0.1rem;
@@ -616,7 +616,7 @@ a {
 
     .site-header.site-header-nav .primary-nav {
         justify-content: center;
-        gap: 0.55rem;
+        gap: 0.5rem;
         padding-bottom: 0.18rem;
     }
 
