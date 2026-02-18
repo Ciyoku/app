@@ -1,11 +1,11 @@
-﻿import { renderLucideIcons } from './lucide.js';
+import { renderLucideIcons } from './lucide.js';
 
 const MAIN_SECTIONS = Object.freeze([
     { href: 'search.html', label: 'بحث', icon: 'search' },
     { href: 'index.html', label: 'كتب', icon: 'book' },
     { href: 'authors.html', label: 'مؤلفون', icon: 'users' },
     { href: 'categories.html', label: 'أقسام', icon: 'folder-tree' },
-    { href: 'favorites.html', label: 'المفضلات', icon: 'book-heart' }
+    { href: 'favorites.html', label: 'المفضلة', icon: 'book-heart' }
 ]);
 
 const PAGE_TO_SECTION = Object.freeze({
