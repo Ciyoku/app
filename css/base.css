@@ -283,9 +283,9 @@ a {
 }
 
 .top-nav-link {
-    min-width: 5.1rem;
-    min-height: 3.35rem;
-    padding: 0.45rem 0.38rem;
+    min-width: 4.55rem;
+    min-height: 2.95rem;
+    padding: 0.34rem 0.3rem;
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -322,6 +322,7 @@ a {
 
 .top-nav-link span {
     display: block;
+    font-size: 14px !important;
     line-height: 1.1 !important;
     white-space: nowrap;
     text-align: center;
@@ -329,8 +330,8 @@ a {
 }
 
 .top-nav-link svg {
-    width: 24px;
-    height: 24px;
+    width: 21px;
+    height: 21px;
     stroke: currentColor;
     fill: none;
     stroke-width: 0.5;
@@ -574,14 +575,14 @@ a {
     }
 
     .top-nav-link {
-        min-width: 4.55rem;
-        min-height: 3.1rem;
-        padding: 0.34rem 0.25rem;
+        min-width: 4.05rem;
+        min-height: 2.75rem;
+        padding: 0.28rem 0.2rem;
     }
 
     .top-nav-link svg {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
     }
 
     .header-actions,
@@ -625,9 +626,9 @@ a {
     }
 
     .top-nav-link {
-        min-width: 4.3rem;
-        min-height: 2.95rem;
-        padding: 0.32rem 0.18rem;
+        min-width: 3.75rem;
+        min-height: 2.6rem;
+        padding: 0.26rem 0.14rem;
     }
 
     .header-star-link {
