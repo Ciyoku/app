@@ -5,6 +5,7 @@
   "description": "Static Arabic digital library with catalog, search, and reader experience.",
   "type": "module",
   "scripts": {
+    "sitemap:build": "node scripts/generate-sitemaps.mjs",
     "check:js": "node scripts/check-js-syntax.mjs",
     "check:books": "node scripts/validate-books.mjs",
     "check:shell": "node scripts/validate-shell.mjs",
