@@ -1,31 +1,7 @@
-import { renderLucideIcons } from './shared/lucide.js';
-
-export function createFavoriteToggleButton({ active = false, title, ariaLabel }) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'favorite-toggle';
-    button.title = title;
-    button.setAttribute('aria-label', ariaLabel);
-    setFavoriteToggleState(button, active);
-    return button;
-}
-
-export function setFavoriteToggleState(button, isActive) {
-    button.replaceChildren();
-    const iconPlaceholder = document.createElement('i');
-    iconPlaceholder.setAttribute('data-lucide', isActive ? 'heart-minus' : 'heart-plus');
-    iconPlaceholder.setAttribute('aria-hidden', 'true');
-    button.appendChild(iconPlaceholder);
-    renderLucideIcons(button);
-    button.classList.toggle('is-active', isActive);
-    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-}
-
 export function createBookListItem({
     bookId,
     title,
-    readHref,
-    favoriteButton
+    readHref
 }) {
     const item = document.createElement('li');
     item.className = 'book-list-item fade-in';
@@ -42,11 +18,7 @@ export function createBookListItem({
     link.textContent = title;
 
     card.appendChild(link);
-
     item.appendChild(card);
-    if (favoriteButton instanceof Element) {
-        item.appendChild(favoriteButton);
-    }
     return item;
 }
 

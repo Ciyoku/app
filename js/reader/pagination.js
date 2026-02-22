@@ -241,7 +241,6 @@ export function createPaginationController({
 
         const blocks = state.pageBlocks[safeIndex] || [];
         renderPageBlocks(blocks);
-        readerContent.style.fontSize = `${state.fontSize}px`;
         updateNavState();
         updateActiveChapterHighlight();
         scrollAfterRender(chapterId);

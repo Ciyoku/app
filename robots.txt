@@ -3,13 +3,10 @@
 User-agent: *
 Allow: /
 
-# Personalized/local-only page
-Disallow: /favorites.html
-
 # Avoid duplicate crawl states from internal reader/search navigation
 Disallow: /*?*page=
 Disallow: /*?*chapter=
 Disallow: /search.html?*q=
-Disallow: /search.html?*type=
+Disallow: /search.html?*category=
 
 Sitemap: https://ciyoku.github.io/sitemap.xml

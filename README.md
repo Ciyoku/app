@@ -1,25 +1,28 @@
 # المكتبة الأخبارية
 
-هي مكتبة ثابتة (Static) تعرض الكتب وتتيح البحث في نصوصها والتصفح عبر قارئ مخصوص يجمع الفهرس والفصول والأجزاء مع إمكانية التنقل بين الصفحات وحفظ موضع القراءة وتسجيل المفضلات إضافة إلى صفحات المؤلفين والتصنيفات.
+Static Arabic digital library with:
+- catalog browsing
+- category and author navigation
+- full-text search (runtime scanning, no prebuilt index)
+- in-browser reader with chapters, parts, and page navigation
 
-## التشغيل محليًا
-شغّل المشروع عبر أي خادم محلي (لا يُنصح بفتح الملفات مباشرة عبر `file://`).
+## Run locally
+Use any static server (do not open with `file://`).
 
-مثال:
+Examples:
 - VS Code Live Server
 - `python -m http.server 8080`
 
-ثم افتح:
+Then open:
 - `http://localhost:8080/index.html`
 
-## تحقق قبل نشر المكتبة
-يتضمن المشروع سكربتات تحقق للهيكل والبيانات:
-
+## Checks before deploy
 ```bash
 npm run check
 ```
 
-أوامر مفصلة:
+Individual commands:
 - `npm run check:js`
 - `npm run check:books`
 - `npm run check:shell`
+- `npm test`

@@ -8,7 +8,8 @@
     "check:js": "node scripts/check-js-syntax.mjs",
     "check:books": "node scripts/validate-books.mjs",
     "check:shell": "node scripts/validate-shell.mjs",
-    "check": "npm run check:js && npm run check:books && npm run check:shell",
+    "check:policy": "node scripts/enforce-no-legacy-features.mjs",
+    "check": "npm run check:js && npm run check:books && npm run check:shell && npm run check:policy",
     "test": "node scripts/run-unit-tests.mjs"
   },
   "engines": {

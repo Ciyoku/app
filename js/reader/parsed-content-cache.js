@@ -1,4 +1,5 @@
 const MAX_PARSED_CACHE_ENTRIES = 10;
+const PARSED_CACHE_TTL_MS = 20 * 60 * 1000;
 const parsedPartCache = new Map();
 
 function normalizeBookId(bookId) {
@@ -20,20 +21,35 @@ function enforceCacheLimit() {
     }
 }
 
+function isExpired(entry) {
+    if (!entry || typeof entry !== 'object') return true;
+    const createdAt = Number(entry.createdAt);
+    if (!Number.isFinite(createdAt)) return true;
+    return (Date.now() - createdAt) > PARSED_CACHE_TTL_MS;
+}
+
 export function getParsedPartCache(bookId, partIndex) {
     const key = buildCacheKey(bookId, partIndex);
     if (!parsedPartCache.has(key)) return null;
 
-    const cached = parsedPartCache.get(key);
+    const entry = parsedPartCache.get(key);
+    if (isExpired(entry)) {
+        parsedPartCache.delete(key);
+        return null;
+    }
+
     parsedPartCache.delete(key);
-    parsedPartCache.set(key, cached);
-    return cached;
+    parsedPartCache.set(key, entry);
+    return entry.value;
 }
 
 export function setParsedPartCache(bookId, partIndex, parsedContent) {
     const key = buildCacheKey(bookId, partIndex);
     parsedPartCache.delete(key);
-    parsedPartCache.set(key, parsedContent);
+    parsedPartCache.set(key, {
+        value: parsedContent,
+        createdAt: Date.now()
+    });
     enforceCacheLimit();
 }
 

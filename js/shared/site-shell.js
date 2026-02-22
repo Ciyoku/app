@@ -5,8 +5,7 @@ const MAIN_SECTIONS = Object.freeze([
     { href: 'search.html', label: 'بحث', icon: 'search' },
     { href: 'index.html', label: 'كتب', icon: 'book' },
     { href: 'authors.html', label: 'مؤلفون', icon: 'users' },
-    { href: 'categories.html', label: 'أقسام', icon: 'folder-tree' },
-    { href: 'favorites.html', label: 'المفضلة', icon: 'book-heart' }
+    { href: 'categories.html', label: 'أقسام', icon: 'folder-tree' }
 ]);
 
 const PAGE_TO_SECTION = Object.freeze({
@@ -16,8 +15,6 @@ const PAGE_TO_SECTION = Object.freeze({
     'author.html': 'authors.html',
     'categories.html': 'categories.html',
     'category.html': 'categories.html',
-    'favorites.html': 'favorites.html',
-    'book-details.html': 'index.html',
     'reader.html': 'index.html'
 });
 

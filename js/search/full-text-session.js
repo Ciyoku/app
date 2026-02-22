@@ -1,6 +1,7 @@
 function resetActivePartState(session) {
     session.activePages = null;
     session.activeBook = null;
+    session.activeBookId = '';
     session.activeBookPartIndex = 0;
     session.activePageIndex = 0;
 }
@@ -17,6 +18,7 @@ export function createSearchSession(books, normalizedQuery) {
         bookIndex: 0,
         partIndex: 0,
         activeBook: null,
+        activeBookId: '',
         activeBookPartIndex: 0,
         activePages: null,
         activePageIndex: 0,
@@ -71,6 +73,7 @@ async function prepareNextPart(session, deps) {
         }
 
         session.activeBook = book;
+        session.activeBookId = bookId;
         session.activeBookPartIndex = currentPartIndex;
         session.activePages = splitPartToPages(partText);
         session.activePageIndex = 0;
@@ -80,28 +83,43 @@ async function prepareNextPart(session, deps) {
     return false;
 }
 
+function forEachTextLine(text, onLine) {
+    const source = String(text ?? '');
+    let start = 0;
+
+    while (start <= source.length) {
+        const nextBreak = source.indexOf('\n', start);
+        const end = nextBreak === -1 ? source.length : nextBreak;
+        const line = source.slice(start, end);
+        const shouldContinue = onLine(line);
+        if (shouldContinue === false) return false;
+        if (nextBreak === -1) break;
+        start = nextBreak + 1;
+    }
+
+    return true;
+}
+
 function scanPageForMatches(session, pageText, targetCount, deps) {
     const {
         maxStoredMatches,
         normalizeLine,
-        getBookId,
         buildMatch
     } = deps;
 
-    const lines = String(pageText ?? '').split('\n');
-    for (const line of lines) {
+    forEachTextLine(pageText, (line) => {
         if (session.matches.length >= targetCount || session.matches.length >= maxStoredMatches) {
-            return;
+            return false;
         }
 
         const trimmed = line.trim();
-        if (!trimmed) continue;
+        if (!trimmed) return true;
 
         const normalizedLine = normalizeLine(trimmed);
-        if (!normalizedLine.includes(session.normalizedQuery)) continue;
+        if (!normalizedLine.includes(session.normalizedQuery)) return true;
 
         const activeBook = session.activeBook;
-        if (!activeBook) continue;
+        if (!activeBook || !session.activeBookId) return true;
 
         const match = buildMatch({
             book: activeBook,
@@ -111,9 +129,10 @@ function scanPageForMatches(session, pageText, targetCount, deps) {
             normalizedQuery: session.normalizedQuery
         });
 
-        if (!match || !getBookId(activeBook) || !match.excerpt) continue;
+        if (!match || !match.excerpt) return true;
         session.matches.push(match);
-    }
+        return true;
+    });
 }
 
 async function scanSessionChunk(session, targetCount, deps) {
@@ -121,18 +140,28 @@ async function scanSessionChunk(session, targetCount, deps) {
         isTokenActive,
         maxStoredMatches,
         pageScanChunkSize,
+        frameBudgetMs = 12,
         yieldToBrowser
     } = deps;
 
     let pagesProcessed = 0;
+    const now = (typeof performance !== 'undefined' && typeof performance.now === 'function')
+        ? () => performance.now()
+        : () => Date.now();
+    const chunkStartedAt = now();
 
     while (
         isTokenActive()
         && !session.completed
         && session.matches.length < targetCount
         && session.matches.length < maxStoredMatches
-        && pagesProcessed < pageScanChunkSize
     ) {
+        const reachedPageChunkLimit = pagesProcessed >= pageScanChunkSize;
+        const reachedFrameBudget = (now() - chunkStartedAt) >= frameBudgetMs;
+        if (reachedPageChunkLimit || reachedFrameBudget) {
+            break;
+        }
+
         if (!session.activePages) {
             const hasPart = await prepareNextPart(session, deps);
             if (!hasPart) {

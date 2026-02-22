@@ -4,8 +4,7 @@ import { createBookListItem, renderListMessage } from './book-list-ui.js';
 export function createBookListPageController({
     container,
     emptyMessage = 'لا توجد كتب متاحة حاليًا.',
-    createReadHref,
-    createTrailingControl = null
+    createReadHref
 }) {
     if (!container || typeof container.replaceChildren !== 'function') {
         throw new Error('A valid list container is required');
@@ -20,6 +19,8 @@ export function createBookListPageController({
             return 0;
         }
 
+        const fragment = document.createDocumentFragment();
+
         sourceBooks.forEach((book, index) => {
             const id = getBookId(book);
             if (!id) return;
@@ -27,14 +28,13 @@ export function createBookListPageController({
             const item = createBookListItem({
                 bookId: id,
                 title: getBookTitle(book, index),
-                readHref: typeof createReadHref === 'function' ? createReadHref(book) : 'reader.html',
-                favoriteButton: typeof createTrailingControl === 'function'
-                    ? createTrailingControl(book, id)
-                    : null
+                readHref: typeof createReadHref === 'function' ? createReadHref(book) : 'reader.html'
             });
 
-            container.appendChild(item);
+            fragment.appendChild(item);
         });
+
+        container.appendChild(fragment);
 
         if (!container.children.length) {
             renderListMessage(container, emptyMessage, 'empty');

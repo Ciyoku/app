@@ -1,13 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>البحث | المكتبة الأخبارية</title>
+    <meta name="description" content="صفحة البحث في المكتبة الأخبارية للعثور على الكتب بسرعة حسب العنوان والتصنيف.">
+    <link rel="canonical" href="https://ciyoku.github.io/search.html">
     <meta name="theme-color" content="#08090b">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; media-src 'self'; upgrade-insecure-requests">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
     <link rel="stylesheet" href="css/base.css">
@@ -45,7 +47,7 @@
             </div>
         </section>
 
-        <div id="searchStatus" class="status-ok" aria-live="polite">جاري تحميل نتائج البحث...</div>
+        <div id="searchStatus" class="status-ok" role="status" aria-live="polite">جاري تحميل نتائج البحث...</div>
 
         <ul class="book-list" id="searchResults">
             <li class="book-list-loading">جاري التحميل...</li>

@@ -1,6 +1,4 @@
 import { collectCategoryStats, UNCATEGORIZED_FILTER } from './books-filtering.js';
-import { createFavoriteToggleButton, setFavoriteToggleState } from './book-list-ui.js';
-import { isFavorite, setFavorite, toggleFavorite } from './favorites-store.js';
 
 export { UNCATEGORIZED_FILTER };
 
@@ -50,54 +48,4 @@ export function populateCategoryFilter(selectElement, sourceBooks, options = {})
     const nextValue = allowedValues.has(currentValue) ? currentValue : 'all';
     selectElement.value = nextValue;
     return nextValue;
-}
-
-export function createFavoriteToggleControl(bookId, options = {}) {
-    const {
-        title = '',
-        ariaLabel = '',
-        onToggle = null
-    } = options;
-
-    const button = createFavoriteToggleButton({
-        active: isFavorite(bookId),
-        title,
-        ariaLabel
-    });
-
-    button.addEventListener('click', (event) => {
-        event.preventDefault();
-        const nextState = toggleFavorite(bookId);
-        setFavoriteToggleState(button, nextState);
-        if (typeof onToggle === 'function') {
-            onToggle(nextState, button);
-        }
-    });
-
-    return button;
-}
-
-export function createFavoriteRemoveControl(bookId, options = {}) {
-    const {
-        title = '',
-        ariaLabel = '',
-        onRemove = null
-    } = options;
-
-    const button = createFavoriteToggleButton({
-        active: true,
-        title,
-        ariaLabel
-    });
-
-    button.addEventListener('click', (event) => {
-        event.preventDefault();
-        setFavorite(bookId, false);
-        setFavoriteToggleState(button, false);
-        if (typeof onRemove === 'function') {
-            onRemove(button);
-        }
-    });
-
-    return button;
 }

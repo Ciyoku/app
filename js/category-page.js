@@ -4,15 +4,12 @@ import {
 } from './books-meta.js';
 import { createBookListPageController } from './book-list-page-controller.js';
 import { filterBooksByCategoryName, groupBooksByCategory } from './categories-data.js';
-import {
-    createFavoriteToggleControl
-} from './catalog-page-core.js';
 import { onDomReady } from './shared/bootstrap.js';
-import { setSocialMetadata } from './shared/seo.js';
+import { setCanonicalUrl, setRobots, setSocialMetadata } from './shared/seo.js';
 import { normalizeCatalogText } from './shared/text-normalization.js';
 
-const FAVORITE_BUTTON_LABEL = 'إضافة أو إزالة من المفضلة';
 const EMPTY_CATEGORY_MESSAGE = 'لا توجد كتب ضمن هذا التصنيف حاليًا.';
+const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 
 onDomReady(initCategoryPage);
 
@@ -36,17 +33,11 @@ function findKnownCategory(categories, requestedCategory) {
     )) || null;
 }
 
-function createFavoriteButton(bookId) {
-    return createFavoriteToggleControl(bookId, {
-        title: FAVORITE_BUTTON_LABEL,
-        ariaLabel: FAVORITE_BUTTON_LABEL
-    });
-}
-
 function setCategorySeo(categoryName) {
     const safeName = String(categoryName).trim();
     if (!safeName) return;
 
+    setRobots(INDEXABLE_ROBOTS);
     setSocialMetadata({
         title: `${safeName} | التصنيفات | المكتبة الأخبارية`,
         description: `تصفح الكتب المصنفة تحت "${safeName}" في المكتبة الأخبارية.`,
@@ -60,12 +51,13 @@ async function initCategoryPage() {
     const listController = createBookListPageController({
         container: listElement,
         emptyMessage: EMPTY_CATEGORY_MESSAGE,
-        createReadHref: (book) => buildReaderUrl(book, 0),
-        createTrailingControl: (_book, bookId) => createFavoriteButton(bookId)
+        createReadHref: (book) => buildReaderUrl(book, 0)
     });
 
     const requestedCategory = getRequestedCategoryName();
     if (!requestedCategory) {
+        setRobots('noindex,follow');
+        setCanonicalUrl('categories.html');
         listController.renderError('يرجى العودة إلى صفحة التصنيفات ثم اختيار تصنيف.');
         return;
     }
@@ -76,6 +68,8 @@ async function initCategoryPage() {
         const knownCategory = findKnownCategory(categories, requestedCategory);
 
         if (!knownCategory) {
+            setRobots('noindex,follow');
+            setCanonicalUrl('categories.html');
             listController.renderError('التصنيف المطلوب غير متاح في بيانات الكتب الحالية.');
             return;
         }

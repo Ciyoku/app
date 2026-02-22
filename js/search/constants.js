@@ -5,4 +5,5 @@ export const INPUT_DEBOUNCE_MS = 220;
 export const MIN_QUERY_WORDS = 2;
 export const MAX_STORED_MATCHES = 2000;
 export const PAGE_SCAN_CHUNK_SIZE = 3;
+export const SCAN_FRAME_BUDGET_MS = 12;
 export const EXCERPT_RADIUS = 120;

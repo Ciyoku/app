@@ -1,42 +1,26 @@
 import { fetchBooksList } from '../books-repo.js';
 import { getBookPartCount } from '../books-meta.js';
-import { isFavorite, toggleFavorite } from '../favorites-store.js';
 import { clearBookPartCache, fetchBookPart } from '../book-content.js';
 import { createHighlightedTextFragment, parseBookContentAsync } from '../reader-parser.js';
 import { toArabicIndicNumber, parsePageNumberInput } from './number-format.js';
 import { getRequestedReaderState, updateReaderStateInUrl } from './url-state.js';
 import { createSearchEngine, searchInBookIndex } from './search.js';
-import {
-    MAX_FONT_SIZE,
-    MIN_FONT_SIZE,
-    applyBookmarkIcon,
-    createReaderState
-} from './constants.js';
+import { createReaderState } from './constants.js';
 import { renderPartSelector, updatePartSelector } from './part-selector.js';
 import { createPaginationController } from './pagination.js';
 import { renderSearchResults } from './search-results.js';
 import { closeSidebarOnCompactView, setupReaderUi } from './ui-shell.js';
-import {
-    loadBookProgress,
-    loadReaderPreferences,
-    resolveRequestedState,
-    saveBookProgress,
-    saveReaderPreferences
-} from './persistence.js';
 import { clearParsedBookCache, getParsedPartCache, setParsedPartCache } from './parsed-content-cache.js';
 import { setCanonicalUrl } from '../shared/seo.js';
 import { SITE_NAME } from '../site-config.js';
 import { buildBookPartState, canPreloadNextPart } from './part-state.js';
 import { createReaderPartLoader } from './part-loader.js';
 import { updateReaderSeo as applyReaderSeoMetadata } from './reader-seo.js';
-import { applyStoredReaderPreferences, clampValue, handleReaderControlAction } from './reader-controls.js';
-import { persistReadingProgress } from './reading-progress.js';
 import { bindReaderPopstateNavigation } from './popstate-navigation.js';
 import {
     UNKNOWN_BOOK_TITLE,
     READER_TITLE_SUFFIX,
     getBookTitleDisplay,
-    getReaderContent,
     renderReaderError,
     renderReaderLoading,
     renderMissingBookMessage,
@@ -47,6 +31,10 @@ const BOOK_TEXT_LOAD_ERROR = 'تعذر تحميل نص الكتاب';
 const BOOK_LOAD_ERROR_PREFIX = 'تعذر تحميل الكتاب';
 const PART_LOAD_ERROR_PREFIX = 'تعذر تحميل هذا الجزء';
 
+function clampValue(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
 const state = createReaderState();
 let activeBookInfo = null;
 let loadBookPart = async () => {};
@@ -55,10 +43,7 @@ const pagination = createPaginationController({
     state,
     toArabicIndicNumber,
     parsePageNumberInput,
-    updateReaderStateInUrl,
-    onPageRender: () => {
-        persistReadingProgress(state, saveBookProgress);
-    }
+    updateReaderStateInUrl
 });
 
 function updateReaderSeo() {
@@ -117,6 +102,7 @@ function resetBookCachesForSwitch(normalizedId) {
 async function loadBook(bookId) {
     const normalizedId = String(bookId ?? '').trim();
     if (!normalizedId) {
+        state.currentBookId = '';
         renderMissingBookMessage();
         return;
     }
@@ -147,8 +133,11 @@ async function loadBook(bookId) {
         setDocumentTitle(info);
 
         const requestedState = getRequestedReaderState();
-        const persistedState = loadBookProgress(normalizedId);
-        const initialState = resolveRequestedState(requestedState, persistedState);
+        const initialState = {
+            partIndex: Number.isInteger(requestedState.partIndex) ? requestedState.partIndex : 0,
+            pageIndex: Number.isInteger(requestedState.pageIndex) ? requestedState.pageIndex : 0,
+            chapterId: String(requestedState.chapterId ?? '')
+        };
         const safePartIndex = clampValue(initialState.partIndex, 0, Math.max(state.bookParts.length - 1, 0));
 
         state.currentPartIndex = safePartIndex;
@@ -167,15 +156,6 @@ async function loadBook(bookId) {
 
 function setupUI() {
     setupReaderUi({
-        onControlAction: (action) => {
-            handleReaderControlAction(action, {
-                state,
-                getReaderContent,
-                saveReaderPreferences,
-                minFontSize: MIN_FONT_SIZE,
-                maxFontSize: MAX_FONT_SIZE
-            });
-        },
         onSearchQuery: (query, resultsContainer, closeSearchOverlay) => {
             renderSearchResults({
                 query,
@@ -187,21 +167,11 @@ function setupUI() {
                 onOpenPage: (pageIndex) => pagination.renderPage(pageIndex, { chapterId: '', historyMode: 'push' }),
                 onOpenChapter: (pageIndex, chapterId) => pagination.goToPage(pageIndex, chapterId, { historyMode: 'push' })
             });
-        },
-        isFavoriteBook: (bookId) => isFavorite(bookId),
-        onToggleFavorite: (bookId) => toggleFavorite(bookId),
-        applyFavoriteIcon: (button, isActive) => applyBookmarkIcon(button, isActive)
+        }
     });
 }
 
 export async function initReaderPage() {
-    applyStoredReaderPreferences({
-        state,
-        loadReaderPreferences,
-        getReaderContent,
-        minFontSize: MIN_FONT_SIZE,
-        maxFontSize: MAX_FONT_SIZE
-    });
     setupUI();
     bindReaderPopstateNavigation({
         state,
@@ -214,6 +184,7 @@ export async function initReaderPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const bookId = urlParams.get('book');
     if (!bookId) {
+        state.currentBookId = '';
         renderMissingBookMessage();
         return;
     }

@@ -13,6 +13,7 @@ export function bindReaderPopstateNavigation({
     window.addEventListener('popstate', async () => {
         const bookIdFromUrl = new URLSearchParams(window.location.search).get('book');
         if (!bookIdFromUrl) {
+            state.currentBookId = '';
             renderMissingBookMessage();
             return;
         }
@@ -23,7 +24,7 @@ export function bindReaderPopstateNavigation({
         }
 
         const requested = getRequestedReaderState();
-        const partIndex = Number.isInteger(requested.partIndex) ? requested.partIndex : state.currentPartIndex;
+        const partIndex = Number.isInteger(requested.partIndex) ? requested.partIndex : 0;
         await loadBookPart(partIndex, {
             pageIndex: requested.pageIndex,
             chapterId: requested.chapterId,

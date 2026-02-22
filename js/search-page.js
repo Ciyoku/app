@@ -28,6 +28,7 @@ import {
     MAX_STORED_MATCHES,
     MIN_QUERY_WORDS,
     PAGE_SCAN_CHUNK_SIZE,
+    SCAN_FRAME_BUDGET_MS,
     RESULTS_BATCH_SIZE
 } from './search/constants.js';
 import { createMatchExcerpt } from './search/excerpt.js';
@@ -95,6 +96,7 @@ async function initSearchPage() {
         splitPartToPages: splitBookPages,
         maxStoredMatches: MAX_STORED_MATCHES,
         pageScanChunkSize: PAGE_SCAN_CHUNK_SIZE,
+        frameBudgetMs: SCAN_FRAME_BUDGET_MS,
         yieldToBrowser,
         buildMatch: buildSearchMatch
     };
@@ -172,6 +174,7 @@ async function initSearchPage() {
         cancelActiveSearch();
         resultsContainer.replaceChildren();
         resultsContainer.hidden = true;
+        resultsContainer.setAttribute('aria-busy', 'false');
         clearStatusMessage();
     }
 
@@ -189,8 +192,7 @@ async function initSearchPage() {
         const item = createBookListItem({
             bookId: match.bookId,
             title: match.title,
-            readHref: match.readHref,
-            favoriteButton: null
+            readHref: match.readHref
         });
 
         const card = item.querySelector('.book-card');
@@ -205,6 +207,7 @@ async function initSearchPage() {
         card.setAttribute('role', 'link');
         card.setAttribute('tabindex', '0');
         card.setAttribute('aria-label', `فتح النتيجة: ${match.title}`);
+        card.dataset.href = match.readHref;
 
         const location = document.createElement('p');
         location.className = 'search-result-location';
@@ -214,26 +217,41 @@ async function initSearchPage() {
         snippet.className = 'search-result-snippet';
         snippet.appendChild(createHighlightedTextFragment(match.excerpt, normalizedQuery));
 
-        const navigateToMatch = () => {
-            window.location.href = match.readHref;
-        };
-
-        card.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target instanceof Element && target.closest('a, button')) {
-                return;
-            }
-            navigateToMatch();
-        });
-
-        card.addEventListener('keydown', (event) => {
-            if (event.key !== 'Enter' && event.key !== ' ') return;
-            event.preventDefault();
-            navigateToMatch();
-        });
-
         card.append(location, snippet);
         return item;
+    }
+
+    function navigateResultCard(cardElement) {
+        const href = String(cardElement?.dataset?.href ?? '').trim();
+        if (!href) return;
+        window.location.href = href;
+    }
+
+    function setupResultCardInteractions() {
+        resultsContainer.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const card = target.closest('.search-result-card');
+            if (!card || !resultsContainer.contains(card)) return;
+            if (target.closest('a, button')) return;
+
+            navigateResultCard(card);
+        });
+
+        resultsContainer.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const card = target.closest('.search-result-card');
+            if (!card || !resultsContainer.contains(card)) return;
+            if (target.closest('a, button')) return;
+
+            event.preventDefault();
+            navigateResultCard(card);
+        });
     }
 
     function updateSearchStatus(session) {
@@ -270,6 +288,7 @@ async function initSearchPage() {
 
     function renderVisibleFullTextResults(session) {
         resultsContainer.hidden = false;
+        resultsContainer.setAttribute('aria-busy', session.completed ? 'false' : 'true');
         const targetVisibleCount = Math.min(visibleResultCount, session.matches.length, MAX_STORED_MATCHES);
 
         if (!targetVisibleCount) {
@@ -292,10 +311,15 @@ async function initSearchPage() {
             resultsContainer.replaceChildren();
         }
 
+        const fragment = document.createDocumentFragment();
         for (let index = renderedResultCount; index < targetVisibleCount; index++) {
             const match = session.matches[index];
             if (!match) continue;
-            resultsContainer.appendChild(createSearchResultItem(match, session.normalizedQuery));
+            fragment.appendChild(createSearchResultItem(match, session.normalizedQuery));
+        }
+
+        if (fragment.childNodes.length > 0) {
+            resultsContainer.appendChild(fragment);
         }
 
         renderedResultCount = targetVisibleCount;
@@ -328,6 +352,7 @@ async function initSearchPage() {
         loadMoreBusy = false;
 
         resultsContainer.hidden = false;
+        resultsContainer.setAttribute('aria-busy', 'true');
         renderListMessage(resultsContainer, 'جاري البحث في نصوص المكتبة...', 'loading');
         clearStatusMessage();
         updateLoadControls();
@@ -406,6 +431,7 @@ async function initSearchPage() {
     });
 
     setupLoadObserver();
+    setupResultCardInteractions();
 
     try {
         books = await fetchBooksList();
@@ -414,6 +440,7 @@ async function initSearchPage() {
     } catch (error) {
         cancelActiveSearch();
         resultsContainer.hidden = false;
+        resultsContainer.setAttribute('aria-busy', 'false');
         renderListMessage(resultsContainer, `تعذر تحميل بيانات البحث: ${error.message}`);
         setStatusMessage(`تعذر تحميل بيانات البحث: ${error.message}`, 'error');
     }

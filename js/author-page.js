@@ -4,15 +4,12 @@ import {
 } from './books-meta.js';
 import { createBookListPageController } from './book-list-page-controller.js';
 import { buildAuthorPageUrl, filterBooksByAuthor, groupBooksByAuthor } from './authors-data.js';
-import {
-    createFavoriteToggleControl
-} from './catalog-page-core.js';
 import { onDomReady } from './shared/bootstrap.js';
-import { setSocialMetadata } from './shared/seo.js';
+import { setCanonicalUrl, setRobots, setSocialMetadata } from './shared/seo.js';
 import { normalizeCatalogText } from './shared/text-normalization.js';
 
-const FAVORITE_BUTTON_LABEL = 'إضافة أو إزالة من المفضلة';
 const EMPTY_AUTHOR_MESSAGE = 'لا توجد كتب لهذا المؤلف حاليًا.';
+const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 
 onDomReady(initAuthorPage);
 
@@ -30,17 +27,11 @@ function findKnownAuthor(authors, requestedAuthor) {
     )) || null;
 }
 
-function createFavoriteButton(bookId) {
-    return createFavoriteToggleControl(bookId, {
-        title: FAVORITE_BUTTON_LABEL,
-        ariaLabel: FAVORITE_BUTTON_LABEL
-    });
-}
-
 function setAuthorSeo(authorName) {
     const safeName = String(authorName).trim();
     if (!safeName) return;
 
+    setRobots(INDEXABLE_ROBOTS);
     setSocialMetadata({
         title: `${safeName} | المؤلفون | المكتبة الأخبارية`,
         description: `تصفح الكتب التابعة للمؤلف "${safeName}" في المكتبة الأخبارية.`,
@@ -54,12 +45,13 @@ async function initAuthorPage() {
     const listController = createBookListPageController({
         container: listElement,
         emptyMessage: EMPTY_AUTHOR_MESSAGE,
-        createReadHref: (book) => buildReaderUrl(book, 0),
-        createTrailingControl: (_book, bookId) => createFavoriteButton(bookId)
+        createReadHref: (book) => buildReaderUrl(book, 0)
     });
 
     const requestedAuthor = getRequestedAuthorName();
     if (!requestedAuthor) {
+        setRobots('noindex,follow');
+        setCanonicalUrl('authors.html');
         listController.renderError('يرجى العودة إلى صفحة المؤلفين ثم اختيار مؤلف.');
         return;
     }
@@ -70,6 +62,8 @@ async function initAuthorPage() {
         const knownAuthor = findKnownAuthor(authors, requestedAuthor);
 
         if (!knownAuthor) {
+            setRobots('noindex,follow');
+            setCanonicalUrl('authors.html');
             listController.renderError('المؤلف المطلوب غير متاح في بيانات الكتب الحالية.');
             return;
         }

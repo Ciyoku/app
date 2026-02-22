@@ -1,5 +1,4 @@
 import { hasMinimumQueryWords } from '../shared/query-words.js';
-import { STORAGE_KEYS } from '../shared/storage-keys.js';
 
 const MIN_READER_SEARCH_WORDS = 2;
 const READER_MIN_SEARCH_WORDS_MESSAGE = 'اكتب كلمتين أو أكثر لبدء البحث.';
@@ -14,14 +13,29 @@ function getReaderShellElements() {
         closeSearch: document.getElementById('closeSearch'),
         searchInput: document.getElementById('searchInput'),
         searchHint: document.getElementById('searchHint'),
-        searchResults: document.getElementById('searchResults'),
-        controls: document.querySelector('.reader-controls'),
-        favBtn: document.getElementById('favBtn')
+        searchResults: document.getElementById('searchResults')
     };
 }
 
 function isCompactViewport() {
     return window.matchMedia('(max-width: 900px)').matches;
+}
+
+function collectFocusableElements(root) {
+    if (!root || typeof root.querySelectorAll !== 'function') return [];
+    const selector = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])'
+    ].join(',');
+
+    return [...root.querySelectorAll(selector)].filter((element) => (
+        !element.hasAttribute('disabled')
+        && element.getAttribute('aria-hidden') !== 'true'
+    ));
 }
 
 export function closeSidebarOnCompactView() {
@@ -37,11 +51,7 @@ export function closeSidebarOnCompactView() {
 }
 
 export function setupReaderUi({
-    onControlAction,
-    onSearchQuery,
-    isFavoriteBook,
-    onToggleFavorite,
-    applyFavoriteIcon
+    onSearchQuery
 }) {
     const {
         toggle,
@@ -52,15 +62,14 @@ export function setupReaderUi({
         closeSearch,
         searchInput,
         searchHint,
-        searchResults,
-        controls,
-        favBtn
+        searchResults
     } = getReaderShellElements();
 
     let compactMode = isCompactViewport();
     let resizeTimer = null;
     let searchDebounceTimer = null;
     let sidebarHiddenBeforeSearch = false;
+    let previousFocusBeforeSearch = null;
 
     const setSidebarVisibility = (hidden) => {
         sidebar.classList.toggle('hidden', hidden);
@@ -86,6 +95,7 @@ export function setupReaderUi({
     };
 
     const closeSearchOverlay = () => {
+        if (!searchOverlay.classList.contains('active')) return;
         setSearchVisibility(false);
         clearTimeout(searchDebounceTimer);
 
@@ -99,7 +109,11 @@ export function setupReaderUi({
             setSidebarVisibility(false);
         }
 
-        searchBtn.focus({ preventScroll: true });
+        const focusTarget = previousFocusBeforeSearch instanceof HTMLElement
+            ? previousFocusBeforeSearch
+            : searchBtn;
+        previousFocusBeforeSearch = null;
+        focusTarget.focus({ preventScroll: true });
     };
 
     applyViewportLayout(true);
@@ -114,12 +128,6 @@ export function setupReaderUi({
         setSearchVisibility(false);
     });
 
-    controls.addEventListener('click', (event) => {
-        const control = event.target.closest('[data-control]');
-        if (!control) return;
-        onControlAction(control.dataset.control);
-    });
-
     searchBtn.addEventListener('click', () => {
         const willOpen = !searchOverlay.classList.contains('active');
 
@@ -129,6 +137,9 @@ export function setupReaderUi({
         }
 
         sidebarHiddenBeforeSearch = !isCompactViewport() && sidebar.classList.contains('hidden');
+        previousFocusBeforeSearch = document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
         setSearchVisibility(true);
         setSidebarVisibility(true);
         searchInput.focus({ preventScroll: true });
@@ -165,9 +176,41 @@ export function setupReaderUi({
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape') return;
         if (!searchOverlay.classList.contains('active')) return;
-        closeSearchOverlay();
+
+        if (event.key === 'Escape') {
+            closeSearchOverlay();
+            return;
+        }
+
+        if (event.key !== 'Tab') return;
+
+        const focusables = collectFocusableElements(searchOverlay);
+        if (!focusables.length) {
+            event.preventDefault();
+            searchInput.focus({ preventScroll: true });
+            return;
+        }
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (!(active instanceof Element) || !searchOverlay.contains(active)) {
+            event.preventDefault();
+            (event.shiftKey ? last : first).focus({ preventScroll: true });
+            return;
+        }
+
+        if (event.shiftKey && active === first) {
+            event.preventDefault();
+            last.focus({ preventScroll: true });
+            return;
+        }
+
+        if (!event.shiftKey && active === last) {
+            event.preventDefault();
+            first.focus({ preventScroll: true });
+        }
     });
 
     document.addEventListener('pointerdown', (event) => {
@@ -178,32 +221,4 @@ export function setupReaderUi({
         closeSearchOverlay();
     });
 
-    const bookId = new URLSearchParams(window.location.search).get('book');
-
-    const updateFavoriteIcon = () => {
-        if (!bookId) {
-            favBtn.disabled = true;
-            favBtn.setAttribute('aria-disabled', 'true');
-            applyFavoriteIcon(favBtn, false);
-            return;
-        }
-
-        favBtn.disabled = false;
-        favBtn.removeAttribute('aria-disabled');
-        applyFavoriteIcon(favBtn, isFavoriteBook(bookId));
-    };
-
-    updateFavoriteIcon();
-
-    if (bookId) {
-        favBtn.addEventListener('click', () => {
-            onToggleFavorite(bookId);
-            updateFavoriteIcon();
-        });
-
-        window.addEventListener('storage', (event) => {
-            if (event.key !== STORAGE_KEYS.favorites) return;
-            updateFavoriteIcon();
-        });
-    }
 }

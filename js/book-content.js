@@ -4,6 +4,7 @@ function getBookPartFileName(partIndex) {
 
 const BOOK_LOAD_ERROR_MESSAGE = 'تعذر تحميل نص الكتاب';
 const MAX_PART_CACHE_ENTRIES = 24;
+const PART_CACHE_TTL_MS = 30 * 60 * 1000;
 const partFetchCache = new Map();
 
 function normalizeBookPathId(bookId) {
@@ -30,6 +31,7 @@ function normalizePartIndex(partIndex) {
 }
 
 function setCacheEntry(key, value) {
+    pruneExpiredEntries();
     partFetchCache.delete(key);
     partFetchCache.set(key, value);
 
@@ -37,6 +39,34 @@ function setCacheEntry(key, value) {
         const oldestKey = partFetchCache.keys().next().value;
         partFetchCache.delete(oldestKey);
     }
+}
+
+function isExpired(entry) {
+    if (!entry || typeof entry !== 'object') return true;
+    const createdAt = Number(entry.createdAt);
+    if (!Number.isFinite(createdAt)) return true;
+    return (Date.now() - createdAt) > PART_CACHE_TTL_MS;
+}
+
+function pruneExpiredEntries() {
+    [...partFetchCache.entries()].forEach(([key, entry]) => {
+        if (isExpired(entry)) {
+            partFetchCache.delete(key);
+        }
+    });
+}
+
+function getFreshCacheEntry(key) {
+    const entry = partFetchCache.get(key);
+    if (!entry) return null;
+    if (isExpired(entry)) {
+        partFetchCache.delete(key);
+        return null;
+    }
+
+    partFetchCache.delete(key);
+    partFetchCache.set(key, entry);
+    return entry;
 }
 
 export async function fetchBookPart(bookId, partIndex = 0, options = {}) {
@@ -49,12 +79,18 @@ export async function fetchBookPart(bookId, partIndex = 0, options = {}) {
     const force = options.force === true;
     const cacheKey = getPartCacheKey(bookId, safePartIndex);
 
-    if (!force && partFetchCache.has(cacheKey)) {
-        return partFetchCache.get(cacheKey);
+    if (!force) {
+        const cached = getFreshCacheEntry(cacheKey);
+        if (cached) {
+            return cached.request;
+        }
     }
 
     const request = fetchTextIfOk(`books/${normalizedBookId}/${getBookPartFileName(safePartIndex)}`);
-    setCacheEntry(cacheKey, request);
+    setCacheEntry(cacheKey, {
+        request,
+        createdAt: Date.now()
+    });
 
     try {
         return await request;

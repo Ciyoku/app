@@ -184,47 +184,6 @@
     color: var(--accent-color);
 }
 
-.favorite-toggle {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 999px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-elevated);
-    color: #9ca2ac;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.favorite-toggle svg {
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 0.5;
-    stroke-linejoin: round;
-    display: block;
-    margin: 0 auto;
-}
-
-.favorite-toggle:hover {
-    color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-.favorite-toggle.is-active {
-    color: var(--accent-color);
-    border-color: var(--accent-color);
-    background-color: var(--accent-weak);
-}
-
-.favorite-toggle.is-active svg {
-    fill: none;
-    stroke: currentColor;
-}
-
 .book-list-loading,
 .book-list-empty,
 .book-list-error {
@@ -318,12 +277,6 @@
 @media (max-width: 640px) {
     .book-list-item {
         grid-template-columns: minmax(0, 1fr);
-    }
-
-    .favorite-toggle {
-        width: 2rem;
-        height: 2rem;
-        justify-self: end;
     }
 
     .book-card {

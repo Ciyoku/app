@@ -2,10 +2,11 @@ import { SITE_NAME } from '../site-config.js';
 import { setRobots, setSocialMetadata, setSocialScaffold } from './seo.js';
 
 const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+const TEMPLATE_ROBOTS = 'noindex,follow';
 const DEFAULT_PAGE_SEO = Object.freeze({
     'index.html': {
         title: `${SITE_NAME} | فهرس الكتب`,
-        description: 'فهرس المكتبة الأخبارية للكتب العربية مع وصول مباشر للقارئ والبحث والمفضلة.',
+        description: 'فهرس المكتبة الأخبارية للكتب العربية مع وصول مباشر للقارئ والبحث.',
         url: '/',
         robots: INDEXABLE_ROBOTS,
         ogType: 'website'
@@ -27,8 +28,8 @@ const DEFAULT_PAGE_SEO = Object.freeze({
     'author.html': {
         title: `المؤلف | ${SITE_NAME}`,
         description: `عرض كتب مؤلف محدد في ${SITE_NAME}.`,
-        url: 'author.html',
-        robots: INDEXABLE_ROBOTS,
+        url: 'authors.html',
+        robots: TEMPLATE_ROBOTS,
         ogType: 'website'
     },
     'categories.html': {
@@ -41,27 +42,13 @@ const DEFAULT_PAGE_SEO = Object.freeze({
     'category.html': {
         title: `التصنيف | ${SITE_NAME}`,
         description: `عرض الكتب المصنفة ضمن تصنيف محدد في ${SITE_NAME}.`,
-        url: 'category.html',
-        robots: INDEXABLE_ROBOTS,
+        url: 'categories.html',
+        robots: TEMPLATE_ROBOTS,
         ogType: 'website'
-    },
-    'favorites.html': {
-        title: `المفضلة | ${SITE_NAME}`,
-        description: `صفحة المفضلة الشخصية في ${SITE_NAME} لعرض الكتب المحفوظة محليًا.`,
-        url: 'favorites.html',
-        robots: 'noindex,nofollow,noarchive',
-        ogType: 'website'
-    },
-    'book-details.html': {
-        title: `تفاصيل الكتاب | ${SITE_NAME}`,
-        description: `صفحة تفاصيل الكتاب في ${SITE_NAME} مع روابط الأجزاء وحالة المفضلة واستكمال القراءة.`,
-        url: 'book-details.html',
-        robots: INDEXABLE_ROBOTS,
-        ogType: 'article'
     },
     'reader.html': {
         title: `القارئ | ${SITE_NAME}`,
-        description: `قارئ ${SITE_NAME} لقراءة الكتب العربية مع فهرس فصول وبحث داخل النص وحفظ موضع القراءة.`,
+        description: `قارئ ${SITE_NAME} لقراءة الكتب العربية مع فهرس فصول وبحث داخل النص.`,
         url: 'reader.html',
         robots: INDEXABLE_ROBOTS,
         ogType: 'article'

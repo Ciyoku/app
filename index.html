@@ -5,14 +5,17 @@
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="owgu-AinYk9K0sfwKH9EJM0dtOqpYVUzkqRrk55Sjio" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المكتبة الأخبارية | فهرس الكتب</title>
+    <title>المكتبة الأخبارية | الكتب</title>
+    <meta name="description" content="فهرس المكتبة الأخبارية للكتب العربية مع وصول مباشر للقارئ والبحث.">
+    <link rel="canonical" href="https://ciyoku.github.io/">
     <meta name="theme-color" content="#08090b">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; upgrade-insecure-requests">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; media-src 'self'; upgrade-insecure-requests">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/catalog.css">
+    <link rel="stylesheet" href="css/info-pages.css">
 </head>
 
 <body class="books-page">
@@ -26,18 +29,14 @@
         <div class="noscript-notice">يحتاج الموقع إلى تفعيل JavaScript لعرض الفهرس والتصفح التفاعلي.</div>
     </noscript>
 
-    <main class="container" id="mainContent">
-        <section class="catalog-tools" aria-label="أدوات الفهرس">
+    <main class="container content-page" id="mainContent">
+        <section class="content-card catalog-tools" aria-label="أدوات الفهرس">
             <div class="tool-group">
-                <label for="catalogSearchInput">بحث بعنوان الكتاب</label>
-                <input id="catalogSearchInput" class="catalog-search-input" type="search" placeholder="اكتب اسم الكتاب..." autocomplete="off">
+                <input id="catalogSearchInput" class="catalog-search-input" type="search" placeholder="اكتب اسم الكتاب..." autocomplete="off" aria-label="بحث بالعنوان">
             </div>
         </section>
 
-        <section class="books-text-ads" aria-label="إعلانات نصية">
-            <h2 class="books-text-ads-title">إعلان</h2>
-            <p class="books-text-ads-item">تتم فهرسة الكتب حاليًا مع إضافة عناوين جديدة باستمرار.</p>
-        </section>
+        <div id="booksSummary" class="status-ok" role="status" aria-live="polite">جاري تحميل العناوين...</div>
 
         <ul class="book-list" id="bookList">
             <li class="book-list-loading">جاري تحميل العناوين...</li>
