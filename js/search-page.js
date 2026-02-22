@@ -7,18 +7,19 @@ import {
     getBookTitle
 } from './books-meta.js';
 import { toArabicIndicNumber } from './reader/number-format.js';
-import { createHighlightedTextFragment, normalizeArabicForSearch } from './reader-parser.js';
+import { createHighlightedTextFragment } from './reader-parser.js';
 import { onDomReady } from './shared/bootstrap.js';
 import { hasMinimumQueryWords } from './shared/query-words.js';
+import { normalizeArabicForSearch } from './shared/arabic-search.js';
 import {
     createBookListItem,
     renderListMessage
 } from './book-list-ui.js';
 import {
-    filterBooksByCategory,
-    normalizeCatalogText,
     populateCategoryFilter
 } from './catalog-page-core.js';
+import { filterBooksByCategoryMode } from './books-filtering.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 import {
     EMPTY_SEARCH_MESSAGE,
     EXCERPT_RADIUS,
@@ -29,8 +30,9 @@ import {
     PAGE_SCAN_CHUNK_SIZE,
     RESULTS_BATCH_SIZE
 } from './search/constants.js';
-import { createMatchExcerpt, splitBookPages } from './search/excerpt.js';
+import { createMatchExcerpt } from './search/excerpt.js';
 import { createSearchSession, fillMatchesUntil } from './search/full-text-session.js';
+import { splitBookPages } from './shared/book-pages.js';
 
 onDomReady(initSearchPage);
 
@@ -375,7 +377,7 @@ async function initSearchPage() {
     async function refresh() {
         updateUrlState();
         const normalizedQuery = normalizeCatalogText(query);
-        const categoryFilteredBooks = filterBooksByCategory(books, categoryMode);
+        const categoryFilteredBooks = filterBooksByCategoryMode(books, categoryMode);
 
         if (!normalizedQuery) {
             renderSearchPrompt();

@@ -1,43 +1,13 @@
-const ARABIC_DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D4-\u08FF]/g;
-const SINGLE_ARABIC_DIACRITIC = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D4-\u08FF]/;
+import {
+    buildNormalizedIndexMap,
+    isArabicDiacritic,
+    normalizeArabicForSearch
+} from './shared/arabic-search.js';
+import { splitBookPages } from './shared/book-pages.js';
+
 const DEFAULT_PARSE_CHUNK_SIZE = 700;
 
-function splitBookPages(text) {
-    if (!String(text).includes('PAGE_SEPARATOR')) {
-        return [String(text ?? '')];
-    }
-    return String(text ?? '').split(/PAGE_SEPARATOR/g);
-}
-
-export function normalizeArabicForSearch(text) {
-    return String(text ?? '')
-        .normalize('NFC')
-        .replace(ARABIC_DIACRITICS, '')
-        .toLowerCase();
-}
-
-function isArabicDiacritic(char) {
-    return SINGLE_ARABIC_DIACRITIC.test(char);
-}
-
-function buildNormalizedIndexMap(text) {
-    const source = String(text ?? '').normalize('NFC');
-    const normalizedChars = [];
-    const indexMap = [];
-
-    for (let index = 0; index < source.length; index++) {
-        const char = source[index];
-        if (isArabicDiacritic(char)) continue;
-        normalizedChars.push(char.toLowerCase());
-        indexMap.push(index);
-    }
-
-    return {
-        source,
-        normalized: normalizedChars.join(''),
-        indexMap
-    };
-}
+export { normalizeArabicForSearch, splitBookPages };
 
 function findDiacriticsInsensitiveRanges(text, normalizedQuery) {
     const query = normalizeArabicForSearch(normalizedQuery);

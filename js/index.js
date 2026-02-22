@@ -1,18 +1,13 @@
 import { fetchBooksList } from './books-repo.js';
 import {
-    buildReaderUrl,
-    getBookId,
-    getBookTitle
+    buildReaderUrl
 } from './books-meta.js';
+import { createBookListPageController } from './book-list-page-controller.js';
 import { onDomReady } from './shared/bootstrap.js';
 import {
-    createBookListItem,
-    renderListMessage
-} from './book-list-ui.js';
-import {
-    createFavoriteToggleControl,
-    normalizeCatalogText
+    createFavoriteToggleControl
 } from './catalog-page-core.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 
 const EMPTY_MESSAGE = 'لا توجد كتب مطابقة للبحث الحالي.';
 const FAVORITE_BUTTON_LABEL = 'إضافة أو إزالة من المفضلة';
@@ -22,9 +17,16 @@ onDomReady(initCatalogPage);
 async function initCatalogPage() {
     const container = document.getElementById('bookList');
     const searchInput = document.getElementById('catalogSearchInput');
+    if (!container || !searchInput) return;
 
     let books = [];
     let query = '';
+    const listController = createBookListPageController({
+        container,
+        emptyMessage: EMPTY_MESSAGE,
+        createReadHref: (book) => buildReaderUrl(book, 0),
+        createTrailingControl: (_book, bookId) => createFavoriteButton(bookId)
+    });
 
     function createFavoriteButton(bookId) {
         return createFavoriteToggleControl(bookId, {
@@ -36,41 +38,13 @@ async function initCatalogPage() {
     function applyFilters(source) {
         const normalizedQuery = normalizeCatalogText(query);
         return source.filter((book) => {
-            const title = normalizeCatalogText(getBookTitle(book));
+            const title = normalizeCatalogText(book.title);
             return !normalizedQuery || title.includes(normalizedQuery);
         });
     }
 
-    function render(filteredBooks) {
-        container.replaceChildren();
-
-        if (!filteredBooks.length) {
-            renderListMessage(container, EMPTY_MESSAGE, 'empty');
-            return;
-        }
-
-        filteredBooks.forEach((book, index) => {
-            const id = getBookId(book);
-            if (!id) return;
-
-            const item = createBookListItem({
-                bookId: id,
-                title: getBookTitle(book, index),
-                readHref: buildReaderUrl(book, 0),
-                favoriteButton: createFavoriteButton(id)
-            });
-
-            container.appendChild(item);
-        });
-
-        if (!container.children.length) {
-            renderListMessage(container, EMPTY_MESSAGE, 'empty');
-        }
-
-    }
-
     function refresh() {
-        render(applyFilters(books));
+        listController.render(applyFilters(books));
     }
 
     searchInput.addEventListener('input', (event) => {
@@ -82,6 +56,6 @@ async function initCatalogPage() {
         books = await fetchBooksList();
         refresh();
     } catch (error) {
-        renderListMessage(container, `خطأ في تحميل قائمة الكتب: ${error.message}`);
+        listController.renderError(`خطأ في تحميل قائمة الكتب: ${error.message}`);
     }
 }

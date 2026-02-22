@@ -4,17 +4,15 @@ import {
     getBookId,
     getBookTitle
 } from './books-meta.js';
+import { createBookListPageController } from './book-list-page-controller.js';
 import { getFavorites } from './favorites-store.js';
 import { onDomReady } from './shared/bootstrap.js';
 import { hasMinimumQueryWords } from './shared/query-words.js';
+import { renderListMessage } from './book-list-ui.js';
 import {
-    createBookListItem,
-    renderListMessage
-} from './book-list-ui.js';
-import {
-    createFavoriteRemoveControl,
-    normalizeCatalogText
+    createFavoriteRemoveControl
 } from './catalog-page-core.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 
 const EMPTY_FAVORITES_MESSAGE = 'لا توجد كتب مفضلة حتى الآن.';
 const REMOVE_FAVORITE_LABEL = 'إزالة من المفضلة';
@@ -26,10 +24,17 @@ onDomReady(initFavoritesPage);
 async function initFavoritesPage() {
     const container = document.getElementById('favoritesList');
     const searchInput = document.getElementById('favoritesSearchInput');
+    if (!container || !searchInput) return;
 
     let books = [];
     let favoriteIds = new Set(getFavorites());
     let query = '';
+    const listController = createBookListPageController({
+        container,
+        emptyMessage: EMPTY_FAVORITES_MESSAGE,
+        createReadHref: (book) => buildReaderUrl(book, 0),
+        createTrailingControl: (_book, bookId) => createRemoveButton(bookId)
+    });
 
     function createRemoveButton(bookId) {
         return createFavoriteRemoveControl(bookId, {
@@ -56,35 +61,13 @@ async function initFavoritesPage() {
         const normalizedQuery = normalizeCatalogText(query);
         const belowMinWordCount = normalizedQuery && !hasMinimumQueryWords(query, MIN_SEARCH_WORDS);
         const visibleBooks = belowMinWordCount ? [] : getVisibleFavorites(normalizedQuery);
-        container.replaceChildren();
 
-        if (!visibleBooks.length) {
-            if (belowMinWordCount) {
-                renderListMessage(container, MIN_SEARCH_WORDS_MESSAGE, 'empty');
-                return;
-            }
-
-            renderListMessage(container, EMPTY_FAVORITES_MESSAGE, 'empty');
+        if (belowMinWordCount) {
+            renderListMessage(container, MIN_SEARCH_WORDS_MESSAGE, 'empty');
             return;
         }
 
-        visibleBooks.forEach((book, index) => {
-            const id = getBookId(book);
-            if (!id) return;
-
-            const item = createBookListItem({
-                bookId: id,
-                title: getBookTitle(book, index),
-                readHref: buildReaderUrl(book, 0),
-                favoriteButton: createRemoveButton(id)
-            });
-
-            container.appendChild(item);
-        });
-
-        if (!container.children.length) {
-            renderListMessage(container, EMPTY_FAVORITES_MESSAGE, 'empty');
-        }
+        listController.render(visibleBooks);
     }
 
     searchInput.addEventListener('input', (event) => {
@@ -93,7 +76,7 @@ async function initFavoritesPage() {
     });
 
     if (!favoriteIds.size) {
-        renderListMessage(container, EMPTY_FAVORITES_MESSAGE, 'empty');
+        listController.render([]);
         return;
     }
 
@@ -101,6 +84,6 @@ async function initFavoritesPage() {
         books = await fetchBooksList();
         render();
     } catch (error) {
-        renderListMessage(container, `خطأ في تحميل المفضلة: ${error.message}`);
+        listController.renderError(`خطأ في تحميل المفضلة: ${error.message}`);
     }
 }

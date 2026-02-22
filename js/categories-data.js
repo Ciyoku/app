@@ -1,5 +1,5 @@
 import { getBookCategories } from './books-meta.js';
-import { normalizeCatalogText } from './catalog-page-core.js';
+import { filterBooksByCategoryName } from './books-filtering.js';
 
 function toSafeCategoryName(value) {
     return String(value ?? '').trim();
@@ -40,12 +40,4 @@ export function buildCategoryPageUrl(categoryName) {
     return `category.html?${params.toString()}`;
 }
 
-export function filterBooksByCategory(books, categoryName) {
-    const normalizedTarget = normalizeCatalogText(categoryName);
-    if (!normalizedTarget) return [];
-
-    return books.filter((book) => {
-        const categories = collectBookCategories(book);
-        return categories.some((category) => normalizeCatalogText(category) === normalizedTarget);
-    });
-}
+export { filterBooksByCategoryName };

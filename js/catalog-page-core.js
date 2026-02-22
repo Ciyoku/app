@@ -1,29 +1,8 @@
-import {
-    getBookCategories
-} from './books-meta.js';
+import { collectCategoryStats, UNCATEGORIZED_FILTER } from './books-filtering.js';
 import { createFavoriteToggleButton, setFavoriteToggleState } from './book-list-ui.js';
 import { isFavorite, setFavorite, toggleFavorite } from './favorites-store.js';
 
-const UNCATEGORIZED_FILTER = '__uncategorized';
-
-export function normalizeCatalogText(value) {
-    return String(value ?? '').normalize('NFC').toLowerCase().trim();
-}
-
-export function filterBooksByCategory(sourceBooks, categoryMode = 'all') {
-    return sourceBooks.filter((book) => {
-        const categories = getBookCategories(book);
-        if (categoryMode === UNCATEGORIZED_FILTER) {
-            return categories.length === 0;
-        }
-
-        if (categoryMode !== 'all') {
-            return categories.includes(categoryMode);
-        }
-
-        return true;
-    });
-}
+export { UNCATEGORIZED_FILTER };
 
 export function populateCategoryFilter(selectElement, sourceBooks, options = {}) {
     const {
@@ -38,20 +17,7 @@ export function populateCategoryFilter(selectElement, sourceBooks, options = {})
         return currentValue;
     }
 
-    const categoriesSet = new Set();
-    let hasUncategorizedBooks = false;
-
-    sourceBooks.forEach((book) => {
-        const categories = getBookCategories(book);
-        if (!categories.length) {
-            hasUncategorizedBooks = true;
-            return;
-        }
-
-        categories.forEach((category) => categoriesSet.add(category));
-    });
-
-    const sortedCategories = [...categoriesSet].sort((a, b) => a.localeCompare(b, locale));
+    const { sortedCategories, hasUncategorizedBooks } = collectCategoryStats(sourceBooks, locale);
     const fragment = document.createDocumentFragment();
 
     const allOption = document.createElement('option');

@@ -1,4 +1,5 @@
 import { hasMinimumQueryWords } from '../shared/query-words.js';
+import { STORAGE_KEYS } from '../shared/storage-keys.js';
 
 const MIN_READER_SEARCH_WORDS = 2;
 const READER_MIN_SEARCH_WORDS_MESSAGE = 'اكتب كلمتين أو أكثر لبدء البحث.';
@@ -201,7 +202,7 @@ export function setupReaderUi({
         });
 
         window.addEventListener('storage', (event) => {
-            if (event.key !== 'shiaLibFavs') return;
+            if (event.key !== STORAGE_KEYS.favorites) return;
             updateFavoriteIcon();
         });
     }

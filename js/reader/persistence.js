@@ -1,4 +1,6 @@
-const STORAGE_KEY = 'shiaLibReaderState';
+import { STORAGE_KEYS } from '../shared/storage-keys.js';
+
+const STORAGE_KEY = STORAGE_KEYS.readerState;
 
 function normalizeBookId(bookId) {
     return String(bookId ?? '').trim();

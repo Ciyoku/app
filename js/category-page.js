@@ -1,17 +1,15 @@
 import { fetchBooksList } from './books-repo.js';
 import {
-    buildReaderUrl,
-    getBookId,
-    getBookTitle
+    buildReaderUrl
 } from './books-meta.js';
-import { filterBooksByCategory, groupBooksByCategory } from './categories-data.js';
-import { createBookListItem, renderListMessage } from './book-list-ui.js';
+import { createBookListPageController } from './book-list-page-controller.js';
+import { filterBooksByCategoryName, groupBooksByCategory } from './categories-data.js';
 import {
-    createFavoriteToggleControl,
-    normalizeCatalogText
+    createFavoriteToggleControl
 } from './catalog-page-core.js';
 import { onDomReady } from './shared/bootstrap.js';
 import { setSocialMetadata } from './shared/seo.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 
 const FAVORITE_BUTTON_LABEL = 'إضافة أو إزالة من المفضلة';
 const EMPTY_CATEGORY_MESSAGE = 'لا توجد كتب ضمن هذا التصنيف حاليًا.';
@@ -45,33 +43,6 @@ function createFavoriteButton(bookId) {
     });
 }
 
-function renderCategoryBooks(container, books) {
-    container.replaceChildren();
-
-    if (!books.length) {
-        renderListMessage(container, EMPTY_CATEGORY_MESSAGE, 'empty');
-        return;
-    }
-
-    books.forEach((book, index) => {
-        const id = getBookId(book);
-        if (!id) return;
-
-        const item = createBookListItem({
-            bookId: id,
-            title: getBookTitle(book, index),
-            readHref: buildReaderUrl(book, 0),
-            favoriteButton: createFavoriteButton(id)
-        });
-
-        container.appendChild(item);
-    });
-
-    if (!container.children.length) {
-        renderListMessage(container, EMPTY_CATEGORY_MESSAGE, 'empty');
-    }
-}
-
 function setCategorySeo(categoryName) {
     const safeName = String(categoryName).trim();
     if (!safeName) return;
@@ -86,10 +57,16 @@ function setCategorySeo(categoryName) {
 async function initCategoryPage() {
     const listElement = document.getElementById('categoryBookList');
     if (!listElement) return;
+    const listController = createBookListPageController({
+        container: listElement,
+        emptyMessage: EMPTY_CATEGORY_MESSAGE,
+        createReadHref: (book) => buildReaderUrl(book, 0),
+        createTrailingControl: (_book, bookId) => createFavoriteButton(bookId)
+    });
 
     const requestedCategory = getRequestedCategoryName();
     if (!requestedCategory) {
-        renderListMessage(listElement, 'يرجى العودة إلى صفحة التصنيفات ثم اختيار تصنيف.', 'empty');
+        listController.renderError('يرجى العودة إلى صفحة التصنيفات ثم اختيار تصنيف.');
         return;
     }
 
@@ -99,15 +76,15 @@ async function initCategoryPage() {
         const knownCategory = findKnownCategory(categories, requestedCategory);
 
         if (!knownCategory) {
-            renderListMessage(listElement, 'التصنيف المطلوب غير متاح في بيانات الكتب الحالية.', 'empty');
+            listController.renderError('التصنيف المطلوب غير متاح في بيانات الكتب الحالية.');
             return;
         }
 
         const selectedCategory = knownCategory.name;
-        const categoryBooks = filterBooksByCategory(books, selectedCategory);
-        renderCategoryBooks(listElement, categoryBooks);
+        const categoryBooks = filterBooksByCategoryName(books, selectedCategory);
+        listController.render(categoryBooks);
         setCategorySeo(selectedCategory);
     } catch (error) {
-        renderListMessage(listElement, `تعذر تحميل كتب التصنيف: ${error.message}`);
+        listController.renderError(`تعذر تحميل كتب التصنيف: ${error.message}`);
     }
 }

@@ -1,4 +1,6 @@
-const STORAGE_KEY = 'shiaLibFavs';
+import { STORAGE_KEYS } from './shared/storage-keys.js';
+
+const STORAGE_KEY = STORAGE_KEYS.favorites;
 let favoritesCache = null;
 
 function normalizeId(id) {

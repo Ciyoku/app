@@ -57,6 +57,20 @@ export function setSocialMetadata({ title, description, url }) {
     }
 }
 
+export function setSocialScaffold({
+    locale = 'ar_AR',
+    ogType = 'website',
+    siteName = '',
+    twitterCard = 'summary'
+} = {}) {
+    upsertMeta('property', 'og:locale', locale);
+    upsertMeta('property', 'og:type', ogType);
+    if (siteName) {
+        upsertMeta('property', 'og:site_name', siteName);
+    }
+    upsertMeta('name', 'twitter:card', twitterCard);
+}
+
 export function setRobots(content) {
     upsertMeta('name', 'robots', String(content || 'index,follow'));
 }

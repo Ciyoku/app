@@ -2,11 +2,24 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
+const EXCLUDED_HTML_FILES = new Set([
+    'google624af6e06577dcab.html',
+    'yandex_defc6757d21e17d9.html'
+]);
+
+function shouldValidateShellFile(fileName) {
+    const normalized = String(fileName ?? '').toLowerCase();
+    if (EXCLUDED_HTML_FILES.has(normalized)) return false;
+    if (/^google[a-z0-9]+\.html$/i.test(normalized)) return false;
+    if (/^yandex_[a-z0-9]+\.html$/i.test(normalized)) return false;
+    return true;
+}
 
 async function getHtmlFiles() {
     const entries = await fs.readdir(ROOT, { withFileTypes: true });
     return entries
         .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.html'))
+        .filter((entry) => shouldValidateShellFile(entry.name))
         .map((entry) => path.join(ROOT, entry.name))
         .sort((a, b) => a.localeCompare(b));
 }

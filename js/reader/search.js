@@ -1,4 +1,4 @@
-import { normalizeArabicForSearch } from '../reader-parser.js';
+import { normalizeArabicForSearch } from '../shared/arabic-search.js';
 import { hasMinimumQueryWords } from '../shared/query-words.js';
 
 function tokenizeNormalizedText(text) {

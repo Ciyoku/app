@@ -1,4 +1,4 @@
-import { normalizeCatalogText } from './catalog-page-core.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 
 function collectAuthorNames(value, output) {
     if (Array.isArray(value)) {

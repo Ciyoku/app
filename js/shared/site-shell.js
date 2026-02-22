@@ -1,4 +1,5 @@
 import { renderLucideIcons } from './lucide.js';
+import { applyDefaultPageSeo } from './page-seo-defaults.js';
 
 const MAIN_SECTIONS = Object.freeze([
     { href: 'search.html', label: 'بحث', icon: 'search' },
@@ -96,6 +97,7 @@ function syncHeaderHeight() {
 function initSiteShell() {
     const pageName = getCurrentPageName();
     const activeHref = getActiveSectionHref();
+    applyDefaultPageSeo(pageName);
     if (shouldInjectPrimaryNav(pageName)) {
         document.querySelectorAll('.site-header').forEach((header) => {
             ensurePrimaryNav(header, activeHref);

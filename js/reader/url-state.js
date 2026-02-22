@@ -79,3 +79,8 @@ export function updateReaderStateInUrl(state, options = {}) {
 
     history.replaceState(null, '', nextUrl);
 }
+
+export {
+    parseReaderStateFromSearchParams,
+    buildReaderUrlForState
+};

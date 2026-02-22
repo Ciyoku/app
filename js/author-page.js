@@ -1,17 +1,15 @@
 import { fetchBooksList } from './books-repo.js';
 import {
-    buildReaderUrl,
-    getBookId,
-    getBookTitle
+    buildReaderUrl
 } from './books-meta.js';
+import { createBookListPageController } from './book-list-page-controller.js';
 import { buildAuthorPageUrl, filterBooksByAuthor, groupBooksByAuthor } from './authors-data.js';
-import { createBookListItem, renderListMessage } from './book-list-ui.js';
 import {
-    createFavoriteToggleControl,
-    normalizeCatalogText
+    createFavoriteToggleControl
 } from './catalog-page-core.js';
 import { onDomReady } from './shared/bootstrap.js';
 import { setSocialMetadata } from './shared/seo.js';
+import { normalizeCatalogText } from './shared/text-normalization.js';
 
 const FAVORITE_BUTTON_LABEL = 'إضافة أو إزالة من المفضلة';
 const EMPTY_AUTHOR_MESSAGE = 'لا توجد كتب لهذا المؤلف حاليًا.';
@@ -39,33 +37,6 @@ function createFavoriteButton(bookId) {
     });
 }
 
-function renderAuthorBooks(container, books) {
-    container.replaceChildren();
-
-    if (!books.length) {
-        renderListMessage(container, EMPTY_AUTHOR_MESSAGE, 'empty');
-        return;
-    }
-
-    books.forEach((book, index) => {
-        const id = getBookId(book);
-        if (!id) return;
-
-        const item = createBookListItem({
-            bookId: id,
-            title: getBookTitle(book, index),
-            readHref: buildReaderUrl(book, 0),
-            favoriteButton: createFavoriteButton(id)
-        });
-
-        container.appendChild(item);
-    });
-
-    if (!container.children.length) {
-        renderListMessage(container, EMPTY_AUTHOR_MESSAGE, 'empty');
-    }
-}
-
 function setAuthorSeo(authorName) {
     const safeName = String(authorName).trim();
     if (!safeName) return;
@@ -80,10 +51,16 @@ function setAuthorSeo(authorName) {
 async function initAuthorPage() {
     const listElement = document.getElementById('authorBookList');
     if (!listElement) return;
+    const listController = createBookListPageController({
+        container: listElement,
+        emptyMessage: EMPTY_AUTHOR_MESSAGE,
+        createReadHref: (book) => buildReaderUrl(book, 0),
+        createTrailingControl: (_book, bookId) => createFavoriteButton(bookId)
+    });
 
     const requestedAuthor = getRequestedAuthorName();
     if (!requestedAuthor) {
-        renderListMessage(listElement, 'يرجى العودة إلى صفحة المؤلفين ثم اختيار مؤلف.', 'empty');
+        listController.renderError('يرجى العودة إلى صفحة المؤلفين ثم اختيار مؤلف.');
         return;
     }
 
@@ -93,15 +70,15 @@ async function initAuthorPage() {
         const knownAuthor = findKnownAuthor(authors, requestedAuthor);
 
         if (!knownAuthor) {
-            renderListMessage(listElement, 'المؤلف المطلوب غير متاح في بيانات الكتب الحالية.', 'empty');
+            listController.renderError('المؤلف المطلوب غير متاح في بيانات الكتب الحالية.');
             return;
         }
 
         const selectedAuthor = knownAuthor.name;
         const authorBooks = filterBooksByAuthor(books, selectedAuthor);
-        renderAuthorBooks(listElement, authorBooks);
+        listController.render(authorBooks);
         setAuthorSeo(selectedAuthor);
     } catch (error) {
-        renderListMessage(listElement, `تعذر تحميل كتب المؤلف: ${error.message}`);
+        listController.renderError(`تعذر تحميل كتب المؤلف: ${error.message}`);
     }
 }

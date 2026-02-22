@@ -1,35 +1,4 @@
-const ARABIC_DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08D4-\u08FF]/;
-
-function isArabicDiacritic(char) {
-    return ARABIC_DIACRITICS.test(char);
-}
-
-function buildNormalizedIndexMap(text) {
-    const source = String(text ?? '').normalize('NFC');
-    const normalizedChars = [];
-    const indexMap = [];
-
-    for (let index = 0; index < source.length; index++) {
-        const char = source[index];
-        if (isArabicDiacritic(char)) continue;
-        normalizedChars.push(char.toLowerCase());
-        indexMap.push(index);
-    }
-
-    return {
-        source,
-        normalized: normalizedChars.join(''),
-        indexMap
-    };
-}
-
-export function splitBookPages(text) {
-    if (!String(text).includes('PAGE_SEPARATOR')) {
-        return [String(text ?? '')];
-    }
-
-    return String(text ?? '').split(/PAGE_SEPARATOR/g);
-}
+import { buildNormalizedIndexMap } from '../shared/arabic-search.js';
 
 export function createMatchExcerpt(line, normalizedQuery, options = {}) {
     const radius = Number.isInteger(options.radius) && options.radius > 0 ? options.radius : 120;
