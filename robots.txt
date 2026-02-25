@@ -10,5 +10,3 @@ Disallow: /search.html?*q=
 Disallow: /search.html?*category=
 
 Sitemap: https://ciyoku.github.io/sitemap.xml
-Sitemap: https://ciyoku.github.io/sitemap-pages.xml
-Sitemap: https://ciyoku.github.io/sitemap-reader.xml

@@ -72,13 +72,6 @@ function buildUrlSetXml(urls, lastmod) {
     return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows}\n</urlset>\n`;
 }
 
-function buildSitemapIndexXml(sitemapUrls, lastmod) {
-    const rows = sitemapUrls
-        .map((url) => `  <sitemap>\n    <loc>${xmlEscape(url)}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>`)
-        .join('\n');
-    return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows}\n</sitemapindex>\n`;
-}
-
 function writeFile(filePath, content) {
     fs.writeFileSync(filePath, content, 'utf8');
 }
@@ -89,18 +82,15 @@ function main() {
 
     const staticUrls = STATIC_PAGES.map((pathname) => `${SITE_URL}${pathname}`);
     const readerUrls = buildReaderUrls(books);
+    const allUrls = [...new Set([...staticUrls, ...readerUrls])];
 
+    // Primary sitemap is a direct URL set to avoid dependency on sitemap index traversal.
+    writeFile(SITEMAP_INDEX_PATH, buildUrlSetXml(allUrls, today));
     writeFile(SITEMAP_PAGES_PATH, buildUrlSetXml(staticUrls, today));
     writeFile(SITEMAP_READER_PATH, buildUrlSetXml(readerUrls, today));
 
-    const sitemapUrls = [
-        `${SITE_URL}/sitemap-pages.xml`,
-        `${SITE_URL}/sitemap-reader.xml`
-    ];
-    writeFile(SITEMAP_INDEX_PATH, buildSitemapIndexXml(sitemapUrls, today));
-
     process.stdout.write(
-        `Generated sitemaps:\n- sitemap.xml\n- sitemap-pages.xml (${staticUrls.length} URLs)\n- sitemap-reader.xml (${readerUrls.length} URLs)\n`
+        `Generated sitemaps:\n- sitemap.xml (${allUrls.length} URLs)\n- sitemap-pages.xml (${staticUrls.length} URLs)\n- sitemap-reader.xml (${readerUrls.length} URLs)\n`
     );
 }
 
