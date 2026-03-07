@@ -1,4 +1,4 @@
-import { SITE_URL } from '../site-config.js';
+import { SITE_URL } from '../core/site-config.js';
 
 function toAbsoluteUrl(pathOrUrl = '/') {
     const raw = String(pathOrUrl || '/').trim();

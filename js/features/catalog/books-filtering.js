@@ -1,5 +1,5 @@
-import { getBookCategories } from './books-meta.js';
-import { normalizeCatalogText } from './shared/text-normalization.js';
+import { getBookCategories } from '../../core/books-meta.js';
+import { normalizeCatalogText } from '../../shared/text-normalization.js';
 
 export const UNCATEGORIZED_FILTER = '__uncategorized';
 

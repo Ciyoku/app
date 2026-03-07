@@ -3,12 +3,50 @@ import {
     isArabicDiacritic,
     normalizeArabicForSearch
 } from './shared/arabic-search.js';
-import { splitBookPages } from './shared/book-pages.js';
+import { splitBookPages } from '../shared/book-pages.js';
 
 const DEFAULT_PARSE_CHUNK_SIZE = 700;
 
 export { normalizeArabicForSearch, splitBookPages };
 
+/**
+ * @typedef {Object} PageBlock
+ * @property {'heading'|'paragraph'} type
+ * @property {string} text
+ * @property {string} [id]
+ */
+
+/**
+ * @typedef {Object} Chapter
+ * @property {string} title
+ * @property {string} id
+ * @property {number} pageIndex
+ */
+
+/**
+ * @typedef {Object} SearchIndexEntry
+ * @property {string} line
+ * @property {string} normalizedLine
+ * @property {number} pageIndex
+ * @property {string} chapterTitle
+ * @property {string} chapterId
+ */
+
+/**
+ * @typedef {Object} ParserContext
+ * @property {string[]} pages
+ * @property {PageBlock[][]} pageBlocks
+ * @property {Chapter[]} chapters
+ * @property {SearchIndexEntry[]} searchIndex
+ * @property {number} chapterIndex
+ * @property {number} processedLines
+ */
+
+/**
+ * @param {string} text
+ * @param {string} normalizedQuery
+ * @returns {{source: string, ranges: [number, number][]}}
+ */
 function findDiacriticsInsensitiveRanges(text, normalizedQuery) {
     const query = normalizeArabicForSearch(normalizedQuery);
     if (!query) return { source: String(text ?? '').normalize('NFC'), ranges: [] };
@@ -35,6 +73,11 @@ function findDiacriticsInsensitiveRanges(text, normalizedQuery) {
     return { source: mapped.source, ranges };
 }
 
+/**
+ * @param {string} line
+ * @param {string} normalizedQuery
+ * @returns {DocumentFragment}
+ */
 export function createHighlightedTextFragment(line, normalizedQuery) {
     const { source, ranges } = findDiacriticsInsensitiveRanges(line, normalizedQuery);
     const fragment = document.createDocumentFragment();
@@ -68,11 +111,19 @@ export function createHighlightedTextFragment(line, normalizedQuery) {
     return fragment;
 }
 
+/**
+ * @param {any} value
+ * @returns {number}
+ */
 function normalizeChunkSize(value) {
     if (Number.isInteger(value) && value > 0) return value;
     return DEFAULT_PARSE_CHUNK_SIZE;
 }
 
+/**
+ * @param {string} text
+ * @returns {ParserContext}
+ */
 function createParserContext(text) {
     return {
         pages: splitBookPages(text),
@@ -84,6 +135,13 @@ function createParserContext(text) {
     };
 }
 
+/**
+ * @param {ParserContext} context
+ * @param {string} line
+ * @param {number} pageIndex
+ * @param {{title: string, id: string}} currentChapter
+ * @returns {{title: string, id: string}}
+ */
 function parseLine(context, line, pageIndex, currentChapter) {
     const trimmed = line.trim();
     if (!trimmed) return currentChapter;
@@ -120,12 +178,21 @@ function parseLine(context, line, pageIndex, currentChapter) {
     return currentChapter;
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 async function yieldToBrowser() {
     await new Promise((resolve) => {
         setTimeout(resolve, 0);
     });
 }
 
+/**
+ * @param {string} text
+ * @param {Object} [options={}]
+ * @param {number} [options.chunkSize]
+ * @returns {Promise<{pages: string[], pageBlocks: PageBlock[][], chapters: Chapter[], searchIndex: SearchIndexEntry[]}>}
+ */
 export async function parseBookContentAsync(text, options = {}) {
     const chunkSize = normalizeChunkSize(options.chunkSize);
     const context = createParserContext(text);

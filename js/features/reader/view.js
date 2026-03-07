@@ -1,4 +1,4 @@
-import { setCanonicalUrl } from '../shared/seo.js';
+import { setCanonicalUrl } from '../../shared/seo.js';
 
 const CHOOSE_BOOK_TITLE = 'اختر كتابًا';
 const CHOOSE_BOOK_MESSAGE = 'لم يتم اختيار كتاب.';

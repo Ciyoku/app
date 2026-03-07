@@ -1,4 +1,4 @@
-import { getBookId, getBookTitle } from './books-meta.js';
+import { getBookId, getBookTitle } from '../../core/books-meta.js';
 import { createBookListItem, renderListMessage } from './book-list-ui.js';
 
 export function createBookListPageController({

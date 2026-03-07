@@ -1,12 +1,12 @@
 import { fetchBooksList } from './books-repo.js';
 import {
     buildReaderUrl
-} from './books-meta.js';
-import { createBookListPageController } from './book-list-page-controller.js';
+import { fetchBooksList } from '../../core/books-repo.js';
+import { createBookListPageController } from '../catalog/book-list-page-controller.js';
 import { filterBooksByCategoryName, groupBooksByCategory } from './categories-data.js';
-import { onDomReady } from './shared/bootstrap.js';
-import { setCanonicalUrl, setRobots, setSocialMetadata } from './shared/seo.js';
-import { normalizeCatalogText } from './shared/text-normalization.js';
+import { onDomReady } from '../../shared/bootstrap.js';
+import { setCanonicalUrl, setRobots, setSocialMetadata } from '../../shared/seo.js';
+import { normalizeCatalogText } from '../../shared/text-normalization.js';
 
 const EMPTY_CATEGORY_MESSAGE = 'لا توجد كتب ضمن هذا التصنيف حاليًا.';
 const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';

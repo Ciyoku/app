@@ -1,4 +1,4 @@
-import { SITE_NAME } from '../site-config.js';
+import { SITE_NAME } from '../core/site-config.js';
 import { setRobots, setSocialMetadata, setSocialScaffold } from './seo.js';
 
 const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';

@@ -1,5 +1,5 @@
-import { toPartParam } from '../books-meta.js';
-import { setSocialMetadata } from '../shared/seo.js';
+import { toPartParam } from '../../core/books-meta.js';
+import { setSocialMetadata } from '../../shared/seo.js';
 
 export function getReaderCanonicalPath(state) {
     if (!state.currentBookId) return 'reader.html';

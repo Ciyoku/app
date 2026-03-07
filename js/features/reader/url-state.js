@@ -1,5 +1,5 @@
-import { parsePartParam, toPartParam } from '../books-meta.js';
-import { SITE_URL } from '../site-config.js';
+import { parsePartParam, toPartParam } from '../../core/books-meta.js';
+import { SITE_URL } from '../../core/site-config.js';
 
 function getFallbackHref() {
     if (typeof window !== 'undefined' && window.location?.href) {

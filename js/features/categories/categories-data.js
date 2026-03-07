@@ -1,5 +1,5 @@
-import { getBookCategories } from './books-meta.js';
-import { filterBooksByCategoryName } from './books-filtering.js';
+import { getBookCategories } from '../../core/books-meta.js';
+import { filterBooksByCategoryName } from '../catalog/books-filtering.js';
 
 function toSafeCategoryName(value) {
     return String(value ?? '').trim();

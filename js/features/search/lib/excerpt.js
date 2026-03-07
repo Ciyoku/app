@@ -1,4 +1,4 @@
-import { buildNormalizedIndexMap } from '../shared/arabic-search.js';
+import { buildNormalizedIndexMap } from '../../../shared/arabic-search.js';
 
 export function createMatchExcerpt(line, normalizedQuery, options = {}) {
     const radius = Number.isInteger(options.radius) && options.radius > 0 ? options.radius : 120;

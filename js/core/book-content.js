@@ -1,3 +1,7 @@
+/**
+ * @param {number} partIndex
+ * @returns {string}
+ */
 function getBookPartFileName(partIndex) {
     return partIndex === 0 ? 'book.txt' : `book${partIndex + 1}.txt`;
 }
@@ -5,12 +9,28 @@ function getBookPartFileName(partIndex) {
 const BOOK_LOAD_ERROR_MESSAGE = 'تعذر تحميل نص الكتاب';
 const MAX_PART_CACHE_ENTRIES = 24;
 const PART_CACHE_TTL_MS = 30 * 60 * 1000;
+
+/**
+ * @typedef {Object} CacheEntry
+ * @property {Promise<string|null>} request
+ * @property {number} createdAt
+ */
+
+/** @type {Map<string, CacheEntry>} */
 const partFetchCache = new Map();
 
+/**
+ * @param {string|number} bookId
+ * @returns {string}
+ */
 function normalizeBookPathId(bookId) {
     return encodeURIComponent(String(bookId ?? '').trim());
 }
 
+/**
+ * @param {string} url
+ * @returns {Promise<string|null>}
+ */
 async function fetchTextIfOk(url) {
     const response = await fetch(url, {
         headers: {
@@ -21,15 +41,28 @@ async function fetchTextIfOk(url) {
     return response.text();
 }
 
+/**
+ * @param {string|number} bookId
+ * @param {number} partIndex
+ * @returns {string}
+ */
 function getPartCacheKey(bookId, partIndex) {
     return `${normalizeBookPathId(bookId)}::${partIndex}`;
 }
 
+/**
+ * @param {number} partIndex
+ * @returns {number}
+ */
 function normalizePartIndex(partIndex) {
     if (!Number.isInteger(partIndex) || partIndex < 0) return 0;
     return partIndex;
 }
 
+/**
+ * @param {string} key
+ * @param {CacheEntry} value
+ */
 function setCacheEntry(key, value) {
     pruneExpiredEntries();
     partFetchCache.delete(key);
@@ -37,10 +70,14 @@ function setCacheEntry(key, value) {
 
     while (partFetchCache.size > MAX_PART_CACHE_ENTRIES) {
         const oldestKey = partFetchCache.keys().next().value;
-        partFetchCache.delete(oldestKey);
+        if (oldestKey) partFetchCache.delete(oldestKey);
     }
 }
 
+/**
+ * @param {CacheEntry} entry
+ * @returns {boolean}
+ */
 function isExpired(entry) {
     if (!entry || typeof entry !== 'object') return true;
     const createdAt = Number(entry.createdAt);
@@ -56,6 +93,10 @@ function pruneExpiredEntries() {
     });
 }
 
+/**
+ * @param {string} key
+ * @returns {CacheEntry|null}
+ */
 function getFreshCacheEntry(key) {
     const entry = partFetchCache.get(key);
     if (!entry) return null;
@@ -69,6 +110,13 @@ function getFreshCacheEntry(key) {
     return entry;
 }
 
+/**
+ * @param {string|number} bookId
+ * @param {number} [partIndex=0]
+ * @param {Object} [options={}]
+ * @param {boolean} [options.force=false]
+ * @returns {Promise<string|null>}
+ */
 export async function fetchBookPart(bookId, partIndex = 0, options = {}) {
     const normalizedBookId = normalizeBookPathId(bookId);
     if (!normalizedBookId) {
@@ -100,6 +148,9 @@ export async function fetchBookPart(bookId, partIndex = 0, options = {}) {
     }
 }
 
+/**
+ * @param {string|number} bookId
+ */
 export function clearBookPartCache(bookId) {
     const prefix = `${normalizeBookPathId(bookId)}::`;
     [...partFetchCache.keys()].forEach((key) => {

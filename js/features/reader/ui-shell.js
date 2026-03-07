@@ -1,4 +1,4 @@
-import { hasMinimumQueryWords } from '../shared/query-words.js';
+import { hasMinimumQueryWords } from '../../shared/query-words.js';
 
 const MIN_READER_SEARCH_WORDS = 2;
 const READER_MIN_SEARCH_WORDS_MESSAGE = 'اكتب كلمتين أو أكثر لبدء البحث.';

@@ -1,7 +1,7 @@
-import { fetchBooksList } from './books-repo.js';
+import { fetchBooksList } from '../../core/books-repo.js';
 import { buildAuthorPageUrl, groupBooksByAuthor } from './authors-data.js';
-import { toArabicIndicNumber } from './reader/number-format.js';
-import { onDomReady } from './shared/bootstrap.js';
+import { toArabicIndicNumber } from '../reader/number-format.js';
+import { onDomReady } from '../../shared/bootstrap.js';
 
 onDomReady(initAuthorsPage);
 

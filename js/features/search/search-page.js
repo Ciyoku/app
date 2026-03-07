@@ -1,16 +1,16 @@
-﻿import { fetchBookPart } from './book-content.js';
-import { fetchBooksList } from './books-repo.js';
+import { fetchBookPart } from '../../core/book-content.js';
+import { fetchBooksList } from '../../core/books-repo.js';
 import {
     buildReaderUrlWithState,
     getBookId,
     getBookPartCount,
     getBookTitle
-} from './books-meta.js';
-import { toArabicIndicNumber } from './reader/number-format.js';
-import { createHighlightedTextFragment } from './reader-parser.js';
-import { onDomReady } from './shared/bootstrap.js';
-import { hasMinimumQueryWords } from './shared/query-words.js';
-import { normalizeArabicForSearch } from './shared/arabic-search.js';
+} from '../../core/books-meta.js';
+import { toArabicIndicNumber } from '../reader/number-format.js';
+import { createHighlightedTextFragment } from '../../core/reader-parser.js';
+import { onDomReady } from '../../shared/bootstrap.js';
+import { hasMinimumQueryWords } from '../../shared/query-words.js';
+import { normalizeArabicForSearch } from '../../shared/arabic-search.js';
 import {
     createBookListItem,
     renderListMessage
@@ -18,8 +18,8 @@ import {
 import {
     populateCategoryFilter
 } from './catalog-page-core.js';
-import { filterBooksByCategoryMode } from './books-filtering.js';
-import { normalizeCatalogText } from './shared/text-normalization.js';
+import { filterBooksByCategoryMode } from '../catalog/books-filtering.js';
+import { normalizeCatalogText } from '../../shared/text-normalization.js';
 import {
     EMPTY_SEARCH_MESSAGE,
     EXCERPT_RADIUS,
@@ -30,10 +30,10 @@ import {
     PAGE_SCAN_CHUNK_SIZE,
     SCAN_FRAME_BUDGET_MS,
     RESULTS_BATCH_SIZE
-} from './search/constants.js';
-import { createMatchExcerpt } from './search/excerpt.js';
-import { createSearchSession, fillMatchesUntil } from './search/full-text-session.js';
-import { splitBookPages } from './shared/book-pages.js';
+} from './lib/constants.js';
+import { createMatchExcerpt } from './lib/excerpt.js';
+import { createSearchSession, fillMatchesUntil } from './lib/full-text-session.js';
+import { splitBookPages } from '../../shared/book-pages.js';
 
 onDomReady(initSearchPage);
 
