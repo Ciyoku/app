@@ -1,5 +1,6 @@
 import { renderLucideIcons } from './lucide.js';
 import { applyDefaultPageSeo } from './page-seo-defaults.js';
+import { registerPwaServiceWorker } from './pwa.js';
 
 const MAIN_SECTIONS = Object.freeze([
     { href: 'search.html', label: 'بحث', icon: 'search' },
@@ -110,6 +111,7 @@ function initSiteShell() {
     renderLucideIcons(document);
     syncHeaderHeight();
     window.addEventListener('resize', syncHeaderHeight, { passive: true });
+    void registerPwaServiceWorker();
 }
 
 if (document.readyState === 'loading') {

@@ -163,6 +163,53 @@
     gap: 0.7rem;
 }
 
+.book-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.book-download-button {
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    font-family: var(--font-ui);
+    font-size: var(--text-xs);
+    line-height: 1;
+    min-height: 2rem;
+    padding: 0.45rem 0.86rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    white-space: nowrap;
+}
+
+.book-download-button:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.book-download-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.book-download-button.is-loading {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.book-download-button.is-downloaded {
+    border-color: rgba(62, 166, 255, 0.45);
+    color: var(--accent-color);
+    background: rgba(62, 166, 255, 0.08);
+}
+
+.book-download-button.is-error {
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
 .book-card {
     border: 1px solid var(--border-color);
     background: var(--sidebar-bg);
@@ -284,6 +331,14 @@
 @media (max-width: 640px) {
     .book-list-item {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .book-item-actions {
+        justify-content: flex-start;
+    }
+
+    .book-download-button {
+        width: 100%;
     }
 
     .book-card {

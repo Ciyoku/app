@@ -1,4 +1,4 @@
-import { getBookId, getBookTitle } from '../../core/books-meta.js';
+import { getBookId, getBookPartCount, getBookTitle } from '../../core/books-meta.js';
 import { createBookListItem, renderListMessage } from '../../shared/book-list-ui.js';
 
 export function createBookListPageController({
@@ -28,7 +28,8 @@ export function createBookListPageController({
             const item = createBookListItem({
                 bookId: id,
                 title: getBookTitle(book, index),
-                readHref: typeof createReadHref === 'function' ? createReadHref(book) : 'reader.html'
+                readHref: typeof createReadHref === 'function' ? createReadHref(book) : 'reader.html',
+                partCount: getBookPartCount(book)
             });
 
             fragment.appendChild(item);

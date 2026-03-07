@@ -1,10 +1,4 @@
-/**
- * @param {number} partIndex
- * @returns {string}
- */
-function getBookPartFileName(partIndex) {
-    return partIndex === 0 ? 'book.txt' : `book${partIndex + 1}.txt`;
-}
+import { fetchBookPartWithOfflinePriority } from '../features/offline/book-offline-storage.js';
 
 const BOOK_LOAD_ERROR_MESSAGE = 'تعذر تحميل نص الكتاب';
 const MAX_PART_CACHE_ENTRIES = 24;
@@ -24,21 +18,18 @@ const partFetchCache = new Map();
  * @returns {string}
  */
 function normalizeBookPathId(bookId) {
-    return encodeURIComponent(String(bookId ?? '').trim());
+    return String(bookId ?? '').trim();
 }
 
 /**
- * @param {string} url
+ * @param {string} bookId
+ * @param {number} partIndex
+ * @param {Object} [options={}]
+ * @param {boolean} [options.force=false]
  * @returns {Promise<string|null>}
  */
-async function fetchTextIfOk(url) {
-    const response = await fetch(url, {
-        headers: {
-            Accept: 'text/plain, text/*;q=0.9, */*;q=0.1'
-        }
-    });
-    if (!response.ok) return null;
-    return response.text();
+async function fetchTextIfOk(bookId, partIndex, options = {}) {
+    return fetchBookPartWithOfflinePriority(bookId, partIndex, options);
 }
 
 /**
@@ -134,7 +125,7 @@ export async function fetchBookPart(bookId, partIndex = 0, options = {}) {
         }
     }
 
-    const request = fetchTextIfOk(`books/${normalizedBookId}/${getBookPartFileName(safePartIndex)}`);
+    const request = fetchTextIfOk(normalizedBookId, safePartIndex, { force });
     setCacheEntry(cacheKey, {
         request,
         createdAt: Date.now()
