@@ -6,7 +6,7 @@ export function createBookListItem({
     title,
     readHref,
     partCount = 1,
-    showDownloadButton = true
+    showDownloadButton = false
 }) {
     const item = document.createElement('li');
     item.className = 'book-list-item fade-in';

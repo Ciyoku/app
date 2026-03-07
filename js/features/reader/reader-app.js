@@ -90,10 +90,12 @@ function createReaderDownloadController() {
      * @param {Object} [options={}]
      * @param {boolean} [options.downloaded=false]
      * @param {boolean} [options.downloading=false]
+     * @param {boolean} [options.disabled=false]
      */
     function setButtonVisualState(options = {}) {
         const downloaded = options.downloaded === true;
         const downloading = options.downloading === true;
+        const disabled = options.disabled === true;
 
         if (downloading) {
             button.replaceChildren(createIosLoader({ size: 'sm', accent: true }));
@@ -104,7 +106,7 @@ function createReaderDownloadController() {
 
         button.classList.toggle('is-downloaded', downloaded);
         button.classList.toggle('is-downloading', downloading);
-        button.disabled = downloading;
+        button.disabled = downloading || disabled;
 
         const label = downloaded
             ? DOWNLOADED_BOOK_ARIA_LABEL
@@ -174,12 +176,16 @@ function createReaderDownloadController() {
         }
     });
 
-    setButtonVisualState({ downloaded: false, downloading: false });
+    setButtonVisualState({ downloaded: false, downloading: false, disabled: true });
 
     return {
         setBook(book) {
             currentBook = book && typeof book === 'object' ? book : null;
             activeSyncToken += 1;
+            if (!currentBook) {
+                setButtonVisualState({ downloaded: false, downloading: false, disabled: true });
+                return;
+            }
             void syncButtonState(currentBook, activeSyncToken);
         }
     };

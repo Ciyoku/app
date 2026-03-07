@@ -5,7 +5,7 @@ export function createBookListPageController({
     container,
     emptyMessage = 'لا توجد كتب متاحة حاليًا.',
     createReadHref,
-    showDownloadButton = true
+    showDownloadButton = false
 }) {
     if (!container || typeof container.replaceChildren !== 'function') {
         throw new Error('A valid list container is required');
