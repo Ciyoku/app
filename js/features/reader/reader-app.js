@@ -2,7 +2,7 @@ import { fetchBooksList } from '../../core/books-repo.js';
 import { getBookPartCount } from '../../core/books-meta.js';
 import { clearBookPartCache, fetchBookPart } from '../../core/book-content.js';
 import { createHighlightedTextFragment, parseBookContentAsync } from '../../core/reader-parser.js';
-import { toArabicIndicNumber, parsePageNumberInput } from './number-format.js';
+import { toArabicIndicNumber, parsePageNumberInput } from '../../shared/number-format.js';
 import { getRequestedReaderState, updateReaderStateInUrl } from './url-state.js';
 import { createSearchEngine, searchInBookIndex } from './search.js';
 import { createReaderState } from './constants.js';

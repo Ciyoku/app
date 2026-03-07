@@ -7,10 +7,11 @@
   "scripts": {
     "sitemap:build": "node scripts/generate-sitemaps.mjs",
     "check:js": "node scripts/check-js-syntax.mjs",
+    "check:imports": "node scripts/check-imports.mjs",
     "check:books": "node scripts/validate-books.mjs",
     "check:shell": "node scripts/validate-shell.mjs",
     "check:policy": "node scripts/enforce-no-legacy-features.mjs",
-    "check": "npm run check:js && npm run check:books && npm run check:shell && npm run check:policy",
+    "check": "npm run check:js && npm run check:imports && npm run check:books && npm run check:shell && npm run check:policy",
     "test": "node scripts/run-unit-tests.mjs"
   },
   "engines": {

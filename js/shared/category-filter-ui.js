@@ -1,4 +1,4 @@
-import { collectCategoryStats, UNCATEGORIZED_FILTER } from './books-filtering.js';
+import { collectCategoryStats, UNCATEGORIZED_FILTER } from '../features/catalog/books-filtering.js';
 
 export { UNCATEGORIZED_FILTER };
 

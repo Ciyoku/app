@@ -1,13 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>القارئ | المكتبة الأخبارية</title>
-    <meta name="description" content="قارئ المكتبة الأخبارية لقراءة الكتب العربية مع فهرس فصول وبحث داخل النص.">
+    <title>Ø§Ù„Ù‚Ø§Ø±Ø¦ | Ø§Ù„Ù…ÙƒØªØ¨Ø© Ø§Ù„Ø£Ø®Ø¨Ø§Ø±ÙŠØ©</title>
+    <meta name="description" content="Ù‚Ø§Ø±Ø¦ Ø§Ù„Ù…ÙƒØªØ¨Ø© Ø§Ù„Ø£Ø®Ø¨Ø§Ø±ÙŠØ© Ù„Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„ÙƒØªØ¨ Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ù…Ø¹ ÙÙ‡Ø±Ø³ ÙØµÙˆÙ„ ÙˆØ¨Ø­Ø« Ø¯Ø§Ø®Ù„ Ø§Ù„Ù†Øµ.">
     <link rel="canonical" href="https://ciyoku.github.io/reader.html">
     <meta name="theme-color" content="#08090b">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
+    <link rel="manifest" href="/assets/img/favicon/site.webmanifest">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; media-src 'self'; upgrade-insecure-requests">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -17,7 +22,7 @@
 </head>
 
 <body>
-    <a class="skip-link" href="#readerContent">تجاوز إلى نص الكتاب</a>
+    <a class="skip-link" href="#readerContent">ØªØ¬Ø§ÙˆØ² Ø¥Ù„Ù‰ Ù†Øµ Ø§Ù„ÙƒØªØ§Ø¨</a>
 
     <header class="site-header">
         <div class="logo">
@@ -26,7 +31,7 @@
                     <path d="M10 5l7 7-7 7"></path>
                     <path d="M4 12h13"></path>
                 </svg>
-                <span>العودة للمكتبة</span>
+                <span>Ø§Ù„Ø¹ÙˆØ¯Ø© Ù„Ù„Ù…ÙƒØªØ¨Ø©</span>
             </a>
         </div>
 
@@ -35,13 +40,13 @@
         <div id="bookTitleDisplay" class="reader-title" aria-live="polite">...</div>
 
         <div class="nav-icons">
-            <button type="button" class="icon" id="searchBtn" title="بحث في الكتاب" aria-label="فتح البحث" aria-controls="searchOverlay" aria-expanded="false">
+            <button type="button" class="icon" id="searchBtn" title="Ø¨Ø­Ø« ÙÙŠ Ø§Ù„ÙƒØªØ§Ø¨" aria-label="ÙØªØ­ Ø§Ù„Ø¨Ø­Ø«" aria-controls="searchOverlay" aria-expanded="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <circle cx="11" cy="11" r="7"></circle>
                     <path d="M20 20l-3.5-3.5"></path>
                 </svg>
             </button>
-            <button type="button" class="icon" id="sidebarToggle" title="قائمة الفصول" aria-label="فتح أو إغلاق قائمة الفصول" aria-controls="sidebar" aria-expanded="false">
+            <button type="button" class="icon" id="sidebarToggle" title="Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙØµÙˆÙ„" aria-label="ÙØªØ­ Ø£Ùˆ Ø¥ØºÙ„Ø§Ù‚ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ÙØµÙˆÙ„" aria-controls="sidebar" aria-expanded="false">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <path d="M9 6h11"></path>
                     <path d="M9 12h11"></path>
@@ -55,20 +60,20 @@
     </header>
 
     <main class="reader-main" id="mainContent">
-        <h1 class="sr-only">قارئ الكتب</h1>
+        <h1 class="sr-only">Ù‚Ø§Ø±Ø¦ Ø§Ù„ÙƒØªØ¨</h1>
 
         <div class="reader-layout">
-            <section class="reader-content full-width" id="readerContent" aria-live="polite" aria-label="نص الكتاب">
+            <section class="reader-content full-width" id="readerContent" aria-live="polite" aria-label="Ù†Øµ Ø§Ù„ÙƒØªØ§Ø¨">
                 <div class="loading">
                     <svg class="loading-spinner" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="12" cy="12" r="9"></circle>
                         <path d="M21 12a9 9 0 0 0-9-9"></path>
                     </svg>
-                    <p>جاري تحميل الكتاب...</p>
+                    <p>Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ÙƒØªØ§Ø¨...</p>
                 </div>
             </section>
 
-            <aside class="sidebar hidden" id="sidebar" aria-hidden="true" aria-label="فهرس الفصول">
+            <aside class="sidebar hidden" id="sidebar" aria-hidden="true" aria-label="ÙÙ‡Ø±Ø³ Ø§Ù„ÙØµÙˆÙ„">
                 <div class="sidebar-title">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path d="M9 6h11"></path>
@@ -78,24 +83,24 @@
                         <circle cx="4.5" cy="12" r="1"></circle>
                         <circle cx="4.5" cy="18" r="1"></circle>
                     </svg>
-                    الفهرس
+                    Ø§Ù„ÙÙ‡Ø±Ø³
                 </div>
                 <ul class="chapter-list" id="chapterList"></ul>
             </aside>
 
             <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-labelledby="searchHeading" aria-hidden="true">
                 <div class="search-overlay-header">
-                    <h2 id="searchHeading">بحث</h2>
-                    <button type="button" class="icon" id="closeSearch" aria-label="إغلاق البحث">
+                    <h2 id="searchHeading">Ø¨Ø­Ø«</h2>
+                    <button type="button" class="icon" id="closeSearch" aria-label="Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ø¨Ø­Ø«">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M6 6l12 12"></path>
                             <path d="M18 6L6 18"></path>
                         </svg>
                     </button>
                 </div>
-                <input type="text" id="searchInput" class="search-input" placeholder="ابحث في هذا الكتاب..." aria-describedby="searchHint">
+                <input type="text" id="searchInput" class="search-input" placeholder="Ø§Ø¨Ø­Ø« ÙÙŠ Ù‡Ø°Ø§ Ø§Ù„ÙƒØªØ§Ø¨..." aria-describedby="searchHint">
                 <div id="searchHint" class="search-hint" aria-live="polite"></div>
-                <div class="search-results" id="searchResults" role="listbox" aria-label="نتائج البحث"></div>
+                <div class="search-results" id="searchResults" role="listbox" aria-label="Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ø¨Ø­Ø«"></div>
             </div>
         </div>
     </main>
@@ -104,4 +109,7 @@
 </body>
 
 </html>
+
+
+
 

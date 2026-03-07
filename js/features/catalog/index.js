@@ -5,7 +5,7 @@ import {
 import { createBookListPageController } from './book-list-page-controller.js';
 import { onDomReady } from '../../shared/bootstrap.js';
 import { normalizeCatalogText } from '../../shared/text-normalization.js';
-import { toArabicIndicNumber } from '../reader/number-format.js';
+import { toArabicIndicNumber } from '../../shared/number-format.js';
 
 const EMPTY_MESSAGE = 'لا توجد كتب مطابقة للبحث الحالي.';
 const EMPTY_CATALOG_MESSAGE = 'لا توجد كتب متاحة حاليًا.';

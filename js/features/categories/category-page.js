@@ -1,7 +1,5 @@
-import { fetchBooksList } from './books-repo.js';
-import {
-    buildReaderUrl
 import { fetchBooksList } from '../../core/books-repo.js';
+import { buildReaderUrl } from '../../core/books-meta.js';
 import { createBookListPageController } from '../catalog/book-list-page-controller.js';
 import { filterBooksByCategoryName, groupBooksByCategory } from './categories-data.js';
 import { onDomReady } from '../../shared/bootstrap.js';

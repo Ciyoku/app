@@ -1,5 +1,5 @@
 import { getBookId, getBookTitle } from '../../core/books-meta.js';
-import { createBookListItem, renderListMessage } from './book-list-ui.js';
+import { createBookListItem, renderListMessage } from '../../shared/book-list-ui.js';
 
 export function createBookListPageController({
     container,

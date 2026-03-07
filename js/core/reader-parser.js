@@ -2,7 +2,7 @@ import {
     buildNormalizedIndexMap,
     isArabicDiacritic,
     normalizeArabicForSearch
-} from './shared/arabic-search.js';
+} from '../shared/arabic-search.js';
 import { splitBookPages } from '../shared/book-pages.js';
 
 const DEFAULT_PARSE_CHUNK_SIZE = 700;

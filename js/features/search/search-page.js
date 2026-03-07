@@ -6,7 +6,7 @@ import {
     getBookPartCount,
     getBookTitle
 } from '../../core/books-meta.js';
-import { toArabicIndicNumber } from '../reader/number-format.js';
+import { toArabicIndicNumber } from '../../shared/number-format.js';
 import { createHighlightedTextFragment } from '../../core/reader-parser.js';
 import { onDomReady } from '../../shared/bootstrap.js';
 import { hasMinimumQueryWords } from '../../shared/query-words.js';
@@ -14,10 +14,10 @@ import { normalizeArabicForSearch } from '../../shared/arabic-search.js';
 import {
     createBookListItem,
     renderListMessage
-} from './book-list-ui.js';
+} from '../../shared/book-list-ui.js';
 import {
     populateCategoryFilter
-} from './catalog-page-core.js';
+} from '../../shared/category-filter-ui.js';
 import { filterBooksByCategoryMode } from '../catalog/books-filtering.js';
 import { normalizeCatalogText } from '../../shared/text-normalization.js';
 import {

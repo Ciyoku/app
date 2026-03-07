@@ -6,13 +6,13 @@ import {
     getBookCategories,
     getBookPartCount,
     parsePartParam
-} from '../js/books-meta.js';
-import { createSearchEngine, searchInBookIndex } from '../js/reader/search.js';
+} from '../js/core/books-meta.js';
+import { createSearchEngine, searchInBookIndex } from '../js/features/reader/search.js';
 import {
     buildReaderUrlForState,
     parseReaderStateFromSearchParams
-} from '../js/reader/url-state.js';
-import { createMatchExcerpt } from '../js/search/excerpt.js';
+} from '../js/features/reader/url-state.js';
+import { createMatchExcerpt } from '../js/features/search/lib/excerpt.js';
 import { normalizeArabicForSearch } from '../js/shared/arabic-search.js';
 
 const testCases = [];

@@ -1,14 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="owgu-AinYk9K0sfwKH9EJM0dtOqpYVUzkqRrk55Sjio" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المكتبة الأخبارية | الكتب</title>
-    <meta name="description" content="فهرس المكتبة الأخبارية مع وصول مباشر للقارئ والبحث.">
+    <title>Ø§Ù„Ù…ÙƒØªØ¨Ø© Ø§Ù„Ø£Ø®Ø¨Ø§Ø±ÙŠØ© | Ø§Ù„ÙƒØªØ¨</title>
+    <meta name="description" content="ÙÙ‡Ø±Ø³ Ø§Ù„Ù…ÙƒØªØ¨Ø© Ø§Ù„Ø£Ø®Ø¨Ø§Ø±ÙŠØ© Ù…Ø¹ ÙˆØµÙˆÙ„ Ù…Ø¨Ø§Ø´Ø± Ù„Ù„Ù‚Ø§Ø±Ø¦ ÙˆØ§Ù„Ø¨Ø­Ø«.">
     <link rel="canonical" href="https://ciyoku.github.io/">
     <meta name="theme-color" content="#08090b">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <link rel="shortcut icon" href="/assets/img/favicon/favicon.ico">
+    <link rel="manifest" href="/assets/img/favicon/site.webmanifest">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; media-src 'self'; upgrade-insecure-requests">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -19,27 +24,27 @@
 </head>
 
 <body class="books-page">
-    <a class="skip-link" href="#mainContent">تجاوز إلى المحتوى</a>
+    <a class="skip-link" href="#mainContent">ØªØ¬Ø§ÙˆØ² Ø¥Ù„Ù‰ Ø§Ù„Ù…Ø­ØªÙˆÙ‰</a>
 
     <header class="site-header site-header-nav">
-        <div class="logo"><a href="index.html" class="site-logo"><span>المكتبة</span><span>الأخبارية</span></a></div>
+        <div class="logo"><a href="index.html" class="site-logo"><span>Ø§Ù„Ù…ÙƒØªØ¨Ø©</span><span>Ø§Ù„Ø£Ø®Ø¨Ø§Ø±ÙŠØ©</span></a></div>
     </header>
 
     <noscript>
-        <div class="noscript-notice">يحتاج الموقع إلى تفعيل JavaScript لعرض الفهرس والتصفح التفاعلي.</div>
+        <div class="noscript-notice">ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¥Ù„Ù‰ ØªÙØ¹ÙŠÙ„ JavaScript Ù„Ø¹Ø±Ø¶ Ø§Ù„ÙÙ‡Ø±Ø³ ÙˆØ§Ù„ØªØµÙØ­ Ø§Ù„ØªÙØ§Ø¹Ù„ÙŠ.</div>
     </noscript>
 
     <main class="container content-page" id="mainContent">
-        <section class="content-card catalog-tools" aria-label="أدوات الفهرس">
+        <section class="content-card catalog-tools" aria-label="Ø£Ø¯ÙˆØ§Øª Ø§Ù„ÙÙ‡Ø±Ø³">
             <div class="tool-group">
-                <input id="catalogSearchInput" class="catalog-search-input" type="search" placeholder="اكتب اسم الكتاب..." autocomplete="off" aria-label="بحث بالعنوان">
+                <input id="catalogSearchInput" class="catalog-search-input" type="search" placeholder="Ø§ÙƒØªØ¨ Ø§Ø³Ù… Ø§Ù„ÙƒØªØ§Ø¨..." autocomplete="off" aria-label="Ø¨Ø­Ø« Ø¨Ø§Ù„Ø¹Ù†ÙˆØ§Ù†">
             </div>
         </section>
 
-        <div id="booksSummary" class="status-ok" role="status" aria-live="polite">جاري تحميل العناوين...</div>
+        <div id="booksSummary" class="status-ok" role="status" aria-live="polite">Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¹Ù†Ø§ÙˆÙŠÙ†...</div>
 
         <ul class="book-list" id="bookList">
-            <li class="book-list-loading">جاري تحميل العناوين...</li>
+            <li class="book-list-loading">Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¹Ù†Ø§ÙˆÙŠÙ†...</li>
         </ul>
     </main>
 
@@ -48,3 +53,6 @@
 </body>
 
 </html>
+
+
+
